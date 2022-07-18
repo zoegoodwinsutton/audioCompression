@@ -105,7 +105,7 @@ int readWaveHeader(FILE *ptr){
 }
 void readWaveFileSamples(FILE *ptr){
     if(header.format_type == 1){
-        print("Number of channels %i", header.channels)
+        print("Number of channels %i", header.channels);
     }else{
         printf("Can only read PCM.");
         exit(1);
