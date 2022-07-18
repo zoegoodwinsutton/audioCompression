@@ -1,5 +1,4 @@
 // WAVE file header format
-02
 struct HEADER {
     unsigned char riff[4];                      // RIFF string
     unsigned int overall_size   ;               // overall size of file in bytes
