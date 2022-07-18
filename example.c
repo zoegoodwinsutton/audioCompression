@@ -15,6 +15,10 @@ int main(){
         printf("Error opening file\n");
         exit(1);
     }
+    readWaveHeader(ptr);
+    printf("hello world\n");
+}
+int readWaveHeader(FILE *ptr){
     int read = 0;
     read = fread(header.riff, sizeof(header.riff), 1, ptr);
     printf("(1-4): %s \n", header.riff);
@@ -100,7 +104,6 @@ int main(){
     float duration_in_seconds = (float) header.overall_size / header.byterate;
     printf("Approx.Duration in seconds=%f\n", duration_in_seconds);
     printf("Approx.Duration in h:m:s=%s\n", seconds_to_time(duration_in_seconds));
-    printf("hello world\n");
 }
 char* seconds_to_time(float raw_seconds){
     char* temp = "6:00";
