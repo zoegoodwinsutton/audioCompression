@@ -14,11 +14,12 @@ int main(){
         printf("Error opening file\n");
         exit(1);
     }
+    int read = 0;
     read = fread(header.riff, sizeof(header.riff), 1, ptr);
     printf("(1-4): %s n", header.riff);
     read = fread(buffer4, sizeof(buffer4), 1, ptr);
     printf("%u %u %u %un", buffer4[0], buffer4[1], buffer4[2], buffer4[3]);
- // convert little endian to big endian 4 byte int
+    // convert little endian to big endian 4 byte int
     header.overall_size  = buffer4[0] |
                         (buffer4[1]<<8) |
                         (buffer4[2]<<16) |
