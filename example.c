@@ -102,3 +102,7 @@ int main(){
     printf("Approx.Duration in h:m:s=%s\n", seconds_to_time(duration_in_seconds));
     printf("hello world\n");
 }
+char* seconds_to_time(float raw_seconds){
+    char* temp = "6:00";
+    return temp;
+}
