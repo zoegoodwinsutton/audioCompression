@@ -5,7 +5,7 @@
 #include "wave.h"
 FILE *ptr;
 char *filename;
-struct Header header;
+struct HEADER header;
 unsigned char buffer4[4];
 
 int main(){
