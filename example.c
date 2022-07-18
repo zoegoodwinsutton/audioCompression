@@ -1,9 +1,15 @@
 #include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include "wave.h"
 FILE *ptr;
 char *filename;
 struct Header header;
+unsigned char buffer4[4];
+
 int main(){
-    ptr = fopen("zoe.wav", "rb")
+    ptr = fopen("zoe.wav", "rb");
     if(ptr == NULL){
         printf("Error opening file\n");
         exit(1);
