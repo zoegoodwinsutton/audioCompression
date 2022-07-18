@@ -8,7 +8,6 @@ char *filename;
 struct HEADER header;
 unsigned char buffer4[4];
 unsigned char buffer2[2];
-char* seconds_to_time(float seconds);
 int main(){
     ptr = fopen("zoe.wav", "rb");
     if(ptr == NULL){
@@ -103,9 +102,12 @@ int readWaveHeader(FILE *ptr){
 
     float duration_in_seconds = (float) header.overall_size / header.byterate;
     printf("Approx.Duration in seconds=%f\n", duration_in_seconds);
-    printf("Approx.Duration in h:m:s=%s\n", seconds_to_time(duration_in_seconds));
 }
-char* seconds_to_time(float raw_seconds){
-    char* temp = "6:00";
-    return temp;
+void readWaveFileSamples(FILE *ptr){
+    if(header.format_type == 1){
+        print("Number of channels %i", header.channels)
+    }else{
+        printf("Can only read PCM.");
+        exit(1);
+    }
 }
