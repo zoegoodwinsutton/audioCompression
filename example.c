@@ -15,6 +15,7 @@ int main(){
         exit(1);
     }
     readWaveHeader(ptr);
+    readWaveFileSamples(ptr);
     printf("hello world\n");
 }
 int readWaveHeader(FILE *ptr){
