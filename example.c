@@ -3,6 +3,9 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include "wave.h"
+void readWaveFileSamples(FILE *ptr);
+int readWaveHeader(FILE *ptr);
+
 FILE *ptr;
 char *filename;
 struct HEADER header;
