@@ -11,6 +11,7 @@ char *filename;
 struct HEADER header;
 unsigned char buffer4[4];
 unsigned char buffer2[2];
+int* sample_data;
 int main(){
     ptr = fopen("zoe.wav", "rb");
     if(ptr == NULL){
@@ -19,7 +20,6 @@ int main(){
     }
     readWaveHeader(ptr);
     readWaveFileSamples(ptr);
-    printf("hello world\n");
 }
 int readWaveHeader(FILE *ptr){
     int read = 0;
@@ -108,6 +108,19 @@ int readWaveHeader(FILE *ptr){
 void readWaveFileSamples(FILE *ptr){
     if(header.format_type == 1){
         printf("Number of channels %i", header.channels);
+        long size_of_each_sample = (header.channels * header.bits_per_sample) / 8;
+        long bytes_in_each_channel = (size_of_each_sample/header.channels);
+        long num_samples = (8 * header.data_size) / (header.channels * header.bits_per_sample);
+        for(int i = 0 ; i < num_samples; i++){
+            fread(buffer2, size_of_each_sample, 1, ptr);
+            sample_data[i] = (buffer2[0]) | (buffer2[1] << 8);
+        }
+        for(int i = 0 ; i < num_samples; i++){
+            printf("%i ", sample_data[i]);
+        }
+        //call compress
+        //call decompress
+
     }else{
         printf("Can only read PCM.");
         exit(1);
