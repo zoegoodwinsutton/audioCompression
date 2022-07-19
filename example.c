@@ -111,11 +111,12 @@ void readWaveFileSamples(FILE *ptr){
         long size_of_each_sample = (header.channels * header.bits_per_sample) / 8;
         long bytes_in_each_channel = (size_of_each_sample/header.channels);
         long num_samples = (8 * header.data_size) / (header.channels * header.bits_per_sample);
-        for(int i = 0 ; i < num_samples; i++){
+        int i;
+        for(i = 0 ; i < num_samples; i++){
             fread(buffer2, size_of_each_sample, 1, ptr);
             sample_data[i] = (buffer2[0]) | (buffer2[1] << 8);
         }
-        for(int i = 0 ; i < num_samples; i++){
+        for(i = 0 ; i < num_samples; i++){
             printf("%i ", sample_data[i]);
         }
         //call compress
