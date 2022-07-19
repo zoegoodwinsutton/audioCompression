@@ -97,9 +97,7 @@ int readWaveHeader(FILE *ptr){
 
     long size_of_each_sample = (header.channels * header.bits_per_sample) / 8;
     printf("Size of each sample:%ld bytes\n", size_of_each_sample);
-
- // calculate duration of file
-
+    // calculate duration of file
     float duration_in_seconds = (float) header.overall_size / header.byterate;
     printf("Approx.Duration in seconds=%f\n", duration_in_seconds);
 }
