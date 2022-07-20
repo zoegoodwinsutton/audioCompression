@@ -24,7 +24,13 @@ int main(){
     readWaveFileSamples(ptr);
 
     compression();
+    for(int i = 0; i < num_samples; i++){
+         printf("%d ", compressed_samples[i]);
+    }
     decompression();
+        for(int i = 0; i < num_samples; i++){
+         printf("%d ", sample_data[i]);
+    }
 }
 int readWaveHeader(FILE *ptr){
     int read = 0;
