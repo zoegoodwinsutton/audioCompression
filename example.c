@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <string.h>
-#include <unistd.h>
+//#include <unistd.h>
 #include <stdlib.h>
 #include "wave.h"
 void readWaveFileSamples(FILE *ptr);
@@ -12,6 +12,8 @@ struct HEADER header;
 unsigned char buffer4[4];
 unsigned char buffer2[2];
 int* sample_data;
+int* compressed_samples;
+long num_samples;
 int main(){
     ptr = fopen("zoe.wav", "rb");
     if(ptr == NULL){
@@ -20,6 +22,8 @@ int main(){
     }
     readWaveHeader(ptr);
     readWaveFileSamples(ptr);
+
+    compression();
 }
 int readWaveHeader(FILE *ptr){
     int read = 0;
@@ -110,7 +114,7 @@ void readWaveFileSamples(FILE *ptr){
         printf("Number of channels %i", header.channels);
         long size_of_each_sample = (header.channels * header.bits_per_sample) / 8;
         long bytes_in_each_channel = (size_of_each_sample/header.channels);
-        long num_samples = (8 * header.data_size) / (header.channels * header.bits_per_sample);
+        num_samples = (8 * header.data_size) / (header.channels * header.bits_per_sample);
         sample_data = calloc(num_samples, size_of_each_sample);
         if(sample_data == NULL){
             printf("Couldn't allocate memory\n");
@@ -130,5 +134,79 @@ void readWaveFileSamples(FILE *ptr){
     }else{
         printf("Can only read PCM.");
         exit(1);
+    }
+}
+int signum( int sample) {
+    if (sample < 0) return 0;
+    else return 1;
+}
+
+int magnitude (int sample) {
+    if (sample < 0) ~sample;
+    else return sample;
+}
+
+char codewordCompression( unsigned int sample_magnitude, int sign){
+    int chord, step;
+    int tmp;
+
+    if (sample_magnitude & (1 << 12)){
+        chord = 0x7;
+        step = (sample_magnitude >> 8) & 0xF;
+        tmp = (sign << 7) & (chord << 4) & step;
+        return (char)tmp;
+    } 
+        if (sample_magnitude & (1 << 11)){
+        chord = 0x6;
+        step = (sample_magnitude >> 7) & 0xF;
+        tmp = (sign << 7) & (chord << 4) & step;
+        return (char)tmp;
+    }
+        if (sample_magnitude & (1 << 10)){
+        chord = 0x5;
+        step = (sample_magnitude >> 6) & 0xF;
+        tmp = (sign << 7) & (chord << 4) & step;
+        return (char)tmp;
+    }
+        if (sample_magnitude & (1 << 9)){
+        chord = 0x4;
+        step = (sample_magnitude >> 5) & 0xF;
+        tmp = (sign << 7) & (chord << 4) & step;
+        return (char)tmp;
+    }
+        if (sample_magnitude & (1 << 8)){
+        chord = 0x3;
+        step = (sample_magnitude >> 4) & 0xF;
+        tmp = (sign << 7) & (chord << 4) & step;
+        return (char)tmp;
+    }
+        if (sample_magnitude & (1 << 7)){
+        chord = 0x2;
+        step = (sample_magnitude >> 3) & 0xF;
+        tmp = (sign << 7) & (chord << 4) & step;
+        return (char)tmp;
+    }
+        if (sample_magnitude & (1 << 6)){
+        chord = 0x1;
+        step = (sample_magnitude >> 2) & 0xF;
+        tmp = (sign << 7) & (chord << 4) & step;
+        return (char)tmp;
+    }
+        if (sample_magnitude & (1 << 5)){
+        chord = 0x0;
+        step = (sample_magnitude >> 1) & 0xF;
+        tmp = (sign << 7) & (chord << 4) & step;
+        return (char)tmp;
+    }
+}
+
+void compression() {
+    compressed_samples = calloc(num_samples, sizeof(char));
+    //check for enough memory
+    for(int i = 0; i < num_samples; i ++){
+        int sample = (sample_data[i] >> 2);
+        int sign = signum(sample);
+        unsigned int sample_magnitude = magnitude(sample) + 33; //from slides??
+        compressed_samples[i] = ~codewordCompression(sample_magnitude, sign);
     }
 }
