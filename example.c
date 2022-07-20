@@ -38,6 +38,7 @@ int main(){
     for(j = 0; j < num_samples; j++){
         printf("%d ", sample_data[j]);
     }
+    printf("Writing WAV file");
     FILE* outfile = fopen("output.wav", "rb");
     writeWaveFileSamples(outfile);
 }
@@ -157,8 +158,8 @@ void writeWaveFileSamples(FILE* outfile){
     long size_of_each_sample = (header.channels * header.bits_per_sample) / 8;
     for(i =0; i < num_samples; i++){
         buffer2[0] = sample_data[i] & 0x000000FF;
-        buffer2[1] = (sample_data[i] & 0X0000FF00) >> 8;
-        fwrite(buffer2,size_of_each_sample,1,outfile);
+        // buffer2[1] = (sample_data[i] & 0X0000FF00) >> 8;
+        // fwrite(buffer2,size_of_each_sample,1,outfile);
     }
     fclose(outfile);
 }
