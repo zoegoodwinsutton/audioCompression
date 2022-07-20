@@ -160,7 +160,7 @@ void writeWaveFileSamples(FILE* outfile){
         buffer2[1] = (sample_data[i] & 0X0000FF00) >> 8;
         fwrite(buffer2,size_of_each_sample,1,outfile);
     }
-    fclose(outfile)
+    fclose(outfile);
 }
 int signum( int sample) {
     if (sample < 0) return 0;
