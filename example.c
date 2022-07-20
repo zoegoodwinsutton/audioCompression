@@ -239,11 +239,11 @@ int codewordCompression( unsigned int sample_magnitude, int sign){
 unsigned int codewordDecompression(int codeword){
     int chord = (codeword & 0x70) >> 4;
     int step = (codeword & 0x0F);
-    int msb, lsb = 1;
+    int msb = 1, lsb = 1;
     //lowkey dunno what msb and lsb are must do more research
     if (chord == 0x7) {
         printf("8");
-        return (lsb << 7) | (step << 8) | (msb << 12);
+        return ((lsb << 7) | (step << 8) | (msb << 12));
     } 
     if (chord == 0x6) {
         printf("7");
@@ -302,7 +302,7 @@ void decompression() {
         int sign = (sample & 0x80) >> 7;
         printf("sign %d ", sign);
         unsigned int sample_magnitude = (codewordDecompression(sample) - 33);
-        printf("magnitude %d ", sample_magnitude); 
+        printf(" magnitude %d ", sample_magnitude); 
         if(sign == 1) sample = sample_magnitude;
         else sample = -sample_magnitude;
         printf("sample mag %d ", sample);
