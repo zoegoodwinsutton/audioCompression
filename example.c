@@ -40,7 +40,8 @@ int main(){
     }
     printf("Writing WAV file");
     FILE* outfile = fopen("output.wav", "rb");
-    writeWaveFileSamples(outfile);
+    fclose(outfile);
+    // writeWaveFileSamples(outfile);
 }
 int readWaveHeader(FILE *ptr){
     int read = 0;
