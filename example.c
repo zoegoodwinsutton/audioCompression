@@ -162,48 +162,56 @@ int codewordCompression( unsigned int sample_magnitude, int sign){
     int tmp;
 
     if (sample_magnitude & (1 << 12)){
+        printf("1");
         chord = 0x7;
         step = (sample_magnitude >> 8) & 0xF;
         tmp = (sign << 7) & (chord << 4) & step;
         return tmp;
     } 
         if (sample_magnitude & (1 << 11)){
+        printf("2");
         chord = 0x6;
         step = (sample_magnitude >> 7) & 0xF;
         tmp = (sign << 7) & (chord << 4) & step;
         return tmp;
     }
         if (sample_magnitude & (1 << 10)){
+        printf("3");
         chord = 0x5;
         step = (sample_magnitude >> 6) & 0xF;
         tmp = (sign << 7) & (chord << 4) & step;
         return tmp;
     }
         if (sample_magnitude & (1 << 9)){
+        printf("4");
         chord = 0x4;
         step = (sample_magnitude >> 5) & 0xF;
         tmp = (sign << 7) & (chord << 4) & step;
         return tmp;
     }
         if (sample_magnitude & (1 << 8)){
+        printf("5");
         chord = 0x3;
         step = (sample_magnitude >> 4) & 0xF;
         tmp = (sign << 7) & (chord << 4) & step;
         return tmp;
     }
         if (sample_magnitude & (1 << 7)){
+        printf("6");
         chord = 0x2;
         step = (sample_magnitude >> 3) & 0xF;
         tmp = (sign << 7) & (chord << 4) & step;
         return tmp;
     }
         if (sample_magnitude & (1 << 6)){
+        printf("7");
         chord = 0x1;
         step = (sample_magnitude >> 2) & 0xF;
         tmp = (sign << 7) & (chord << 4) & step;
         return tmp;
     }
         if (sample_magnitude & (1 << 5)){
+        printf("8");
         chord = 0x0;
         step = (sample_magnitude >> 1) & 0xF;
         tmp = (sign << 7) & (chord << 4) & step;
@@ -255,7 +263,7 @@ void compression() {
         unsigned int sample_magnitude = magnitude(sample) + 33; //from slides??
         printf("magnitude %d ", sample_magnitude);
         compressed_samples[i] = ~codewordCompression(sample_magnitude, sign);
-        printf("compressed %d ", compressed_samples[i]);
+        printf(" compressed %d ", compressed_samples[i]);
         
     }
 }
