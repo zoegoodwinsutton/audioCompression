@@ -247,10 +247,16 @@ void compression() {
     //check for enough memory
     int i;
     for(i = 0; i < num_samples; i ++){
+        printf("/n sample before %d, %d ", sample_data[i], i);
         int sample = (sample_data[i] >> 2);
+        printf("sample after %d ", sample);
         int sign = signum(sample);
+        printf("sign %d ", sign);
         unsigned int sample_magnitude = magnitude(sample) + 33; //from slides??
+        printf("magnitude %d ", sample_magnitude);
         compressed_samples[i] = ~codewordCompression(sample_magnitude, sign);
+        printf("compressed %d ", compressed_samples[i]);
+        
     }
 }
 
