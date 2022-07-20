@@ -241,35 +241,35 @@ unsigned int codewordDecompression(int codeword){
     int step = (codeword & 0x0F);
     int msb, lsb = 1;
     //lowkey dunno what msb and lsb are must do more research
-    if (chord = 0x7) {
+    if (chord == 0x7) {
         printf("8");
         return (lsb << 7) | (step << 8) | (msb << 12);
     } 
-    if (chord = 0x6) {
+    if (chord == 0x6) {
         printf("7");
         return (lsb << 6) | (step << 7) | (msb << 11);
     } 
-    if (chord = 0x5) {
+    if (chord == 0x5) {
         printf("6");
         return (lsb << 5) | (step << 6) | (msb << 10);
     } 
-    if (chord = 0x4) {
+    if (chord == 0x4) {
         printf("5");
         return (lsb << 4) | (step << 5) | (msb << 9);
     } 
-    if (chord = 0x3) {
+    if (chord == 0x3) {
         printf("4");
         return (lsb << 3) | (step << 4) | (msb << 8);
     } 
-    if (chord = 0x2) {
+    if (chord == 0x2) {
         printf("3");
         return (lsb << 2) | (step << 3) | (msb << 7);
     } 
-    if (chord = 0x1) {
+    if (chord == 0x1) {
         printf("2");
         return (lsb << 1) | (step << 2) | (msb << 6);
     } 
-    if (chord = 0x0) {
+    if (chord == 0x0) {
         printf("1");
         return lsb | (step << 1) | (msb << 5);
     } 
