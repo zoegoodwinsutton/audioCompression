@@ -38,7 +38,7 @@ int main(){
     for(j = 0; j < num_samples; j++){
         printf("%d ", sample_data[j]);
     }
-    print("Writing WAV file")
+    print("Writing WAV file");
     FILE* outfile = fopen("output.wav", "rb");
     writeWaveFileSamples(outfile);
 }
