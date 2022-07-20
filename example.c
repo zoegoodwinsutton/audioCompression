@@ -155,7 +155,7 @@ void readWaveFileSamples(FILE *ptr){
 }
 void writeWaveFileSamples(FILE* outfile){
     int i ;
-    long size_of_each_sample = (header.channels * header.bits_per_sample) / 8;
+    // long size_of_each_sample = (header.channels * header.bits_per_sample) / 8;
     for(i =0; i < num_samples; i++){
         buffer2[0] = sample_data[i] & 0x000000FF;
         // buffer2[1] = (sample_data[i] & 0X0000FF00) >> 8;
