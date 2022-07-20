@@ -8,7 +8,7 @@ int readWaveHeader(FILE *ptr);
 void writeWaveFileSamples();
 void compression();
 void decompression();
-
+FILE *outfile;
 FILE *ptr;
 char *filename;
 struct HEADER header;
@@ -39,7 +39,7 @@ int main(){
         printf("%d ", sample_data[j]);
     }
     printf("Writing WAV file\n");
-    FILE* outfile = fopen("output.wav", "wb");
+    outfile = fopen("output.wav", "wb");
     fclose(outfile);
     // writeWaveFileSamples(outfile);
 }
