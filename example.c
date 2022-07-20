@@ -24,6 +24,7 @@ int main(){
     readWaveFileSamples(ptr);
 
     compression();
+    decompression();
 }
 int readWaveHeader(FILE *ptr){
     int read = 0;
@@ -209,4 +210,46 @@ void compression() {
         unsigned int sample_magnitude = magnitude(sample) + 33; //from slides??
         compressed_samples[i] = ~codewordCompression(sample_magnitude, sign);
     }
+}
+
+void decompression() {
+    for(int i = 0; i < num_samples; i ++){
+        int sample = ~(compressed_samples[i]);
+        int sign = (sample & 0x80) >> 7;
+        unsigned int sample_magnitude = codewordDecompression(sample) - 33; 
+        if(sign == 1) sample = sample_magnitude;
+        else sample = -sample_magnitude;
+        sample_data[i] = sample << 2;
+    }
+}
+
+char codewordDecompression(char codeword){
+    int chord = (codeword & 0x70) >> 4;
+    int step = (codeword & 0x0F);
+    int msb, lsb = 1;
+    //lowkey dunno what msb and lsb are must do more research
+    if (chord = 0x7) {
+        return (lsb << 7) | (step << 8) | (msb << 12);
+    } 
+    if (chord = 0x6) {
+        return (lsb << 6) | (step << 7) | (msb << 11);
+    } 
+    if (chord = 0x5) {
+        return (lsb << 5) | (step << 6) | (msb << 10);
+    } 
+    if (chord = 0x4) {
+        return (lsb << 4) | (step << 5) | (msb << 9);
+    } 
+    if (chord = 0x3) {
+        return (lsb << 3) | (step << 4) | (msb << 8);
+    } 
+    if (chord = 0x2) {
+        return (lsb << 2) | (step << 3) | (msb << 7);
+    } 
+    if (chord = 0x1) {
+        return (lsb << 1) | (step << 2) | (msb << 6);
+    } 
+    if (chord = 0x0) {
+        return lsb | (step << 1) | (msb << 5);
+    } 
 }
