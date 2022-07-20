@@ -211,31 +211,6 @@ char codewordCompression( unsigned int sample_magnitude, int sign){
     }
 }
 
-void compression() {
-    compressed_samples = calloc(num_samples, sizeof(char));
-    //check for enough memory
-    int i;
-    for(i = 0; i < num_samples; i ++){
-        int sample = (sample_data[i] >> 2);
-        int sign = signum(sample);
-        unsigned int sample_magnitude = magnitude(sample) + 33; //from slides??
-        compressed_samples[i] = ~codewordCompression(sample_magnitude, sign);
-    }
-}
-
-void decompression() {
-    int i;
-    for(i = 0; i < num_samples; i ++){
-        int sample = ~(compressed_samples[i]);
-        int sign = (sample & 0x80) >> 7;
-        unsigned int sample_magnitude = codewordDecompression(sample) - 33; 
-        if(sign == 1) sample = sample_magnitude;
-        else sample = -sample_magnitude;
-        sample_data[i] = sample << 2;
-    }
-    return
-}
-
 unsigned int codewordDecompression(char codeword){
     int chord = (codeword & 0x70) >> 4;
     int step = (codeword & 0x0F);
@@ -266,3 +241,28 @@ unsigned int codewordDecompression(char codeword){
         return lsb | (step << 1) | (msb << 5);
     } 
 }
+
+void compression() {
+    compressed_samples = calloc(num_samples, sizeof(char));
+    //check for enough memory
+    int i;
+    for(i = 0; i < num_samples; i ++){
+        int sample = (sample_data[i] >> 2);
+        int sign = signum(sample);
+        unsigned int sample_magnitude = magnitude(sample) + 33; //from slides??
+        compressed_samples[i] = ~codewordCompression(sample_magnitude, sign);
+    }
+}
+
+void decompression() {
+    int i;
+    for(i = 0; i < num_samples; i ++){
+        int sample = ~(compressed_samples[i]);
+        int sign = (sample & 0x80) >> 7;
+        unsigned int sample_magnitude = codewordDecompression(sample) - 33; 
+        if(sign == 1) sample = sample_magnitude;
+        else sample = -sample_magnitude;
+        sample_data[i] = sample << 2;
+    }
+}
+
