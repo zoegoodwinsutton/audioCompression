@@ -157,7 +157,7 @@ int magnitude (int sample) {
     else return sample;
 }
 
-char codewordCompression( unsigned int sample_magnitude, int sign){
+int codewordCompression( unsigned int sample_magnitude, int sign){
     int chord, step;
     int tmp;
 
@@ -165,49 +165,49 @@ char codewordCompression( unsigned int sample_magnitude, int sign){
         chord = 0x7;
         step = (sample_magnitude >> 8) & 0xF;
         tmp = (sign << 7) & (chord << 4) & step;
-        return (char)tmp;
+        return tmp;
     } 
         if (sample_magnitude & (1 << 11)){
         chord = 0x6;
         step = (sample_magnitude >> 7) & 0xF;
         tmp = (sign << 7) & (chord << 4) & step;
-        return (char)tmp;
+        return tmp;
     }
         if (sample_magnitude & (1 << 10)){
         chord = 0x5;
         step = (sample_magnitude >> 6) & 0xF;
         tmp = (sign << 7) & (chord << 4) & step;
-        return (char)tmp;
+        return tmp;
     }
         if (sample_magnitude & (1 << 9)){
         chord = 0x4;
         step = (sample_magnitude >> 5) & 0xF;
         tmp = (sign << 7) & (chord << 4) & step;
-        return (char)tmp;
+        return tmp;
     }
         if (sample_magnitude & (1 << 8)){
         chord = 0x3;
         step = (sample_magnitude >> 4) & 0xF;
         tmp = (sign << 7) & (chord << 4) & step;
-        return (char)tmp;
+        return tmp;
     }
         if (sample_magnitude & (1 << 7)){
         chord = 0x2;
         step = (sample_magnitude >> 3) & 0xF;
         tmp = (sign << 7) & (chord << 4) & step;
-        return (char)tmp;
+        return tmp;
     }
         if (sample_magnitude & (1 << 6)){
         chord = 0x1;
         step = (sample_magnitude >> 2) & 0xF;
         tmp = (sign << 7) & (chord << 4) & step;
-        return (char)tmp;
+        return tmp;
     }
         if (sample_magnitude & (1 << 5)){
         chord = 0x0;
         step = (sample_magnitude >> 1) & 0xF;
         tmp = (sign << 7) & (chord << 4) & step;
-        return (char)tmp;
+        return tmp;
     }
 }
 
@@ -247,7 +247,7 @@ void compression() {
     //check for enough memory
     int i;
     for(i = 0; i < num_samples; i ++){
-        printf("/n sample before %d, %d ", sample_data[i], i);
+        printf("\n sample before %d, %d ", sample_data[i], i);
         int sample = (sample_data[i] >> 2);
         printf("sample after %d ", sample);
         int sign = signum(sample);
