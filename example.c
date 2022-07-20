@@ -170,56 +170,56 @@ int codewordCompression( unsigned int sample_magnitude, int sign){
         printf("step %d ", step);
         tmp = (sign << 7) | (chord << 4) | step;
         printf("tmp %d ", tmp);
-        return tmp;
+        return (int)tmp;
     } 
         if (sample_magnitude & (1 << 11)){
         printf("2");
         chord = 0x6;
         step = (sample_magnitude >> 7) & 0xF;
         tmp = (sign << 7) | (chord << 4) | step;
-        return tmp;
+        return (int)tmp;
     }
         if (sample_magnitude & (1 << 10)){
         printf("3");
         chord = 0x5;
         step = (sample_magnitude >> 6) & 0xF;
         tmp = (sign << 7) | (chord << 4) | step;
-        return tmp;
+        return (int)tmp;
     }
         if (sample_magnitude & (1 << 9)){
         printf("4");
         chord = 0x4;
         step = (sample_magnitude >> 5) & 0xF;
         tmp = (sign << 7) | (chord << 4) | step;
-        return tmp;
+        return (int)tmp;
     }
         if (sample_magnitude & (1 << 8)){
         printf("5");
         chord = 0x3;
         step = (sample_magnitude >> 4) & 0xF;
         tmp = (sign << 7) | (chord << 4) | step;
-        return tmp;
+        return (int)tmp;
     }
         if (sample_magnitude & (1 << 7)){
         printf("6");
         chord = 0x2;
         step = (sample_magnitude >> 3) & 0xF;
         tmp = (sign << 7) | (chord << 4) | step;
-        return tmp;
+        return (int)tmp;
     }
         if (sample_magnitude & (1 << 6)){
         printf("7");
         chord = 0x1;
         step = (sample_magnitude >> 2) & 0xF;
         tmp = (sign << 7) | (chord << 4) | step;
-        return tmp;
+        return (int)tmp;
     }
         if (sample_magnitude & (1 << 5)){
         printf("8");
         chord = 0x0;
         step = (sample_magnitude >> 1) & 0xF;
-        tmp = (sign << 7) | (chord << 4) | step;
-        return tmp;
+        tmp = ((sign << 7) | (chord << 4) | step);
+        return (int)tmp;
     }
 }
 
