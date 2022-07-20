@@ -219,7 +219,8 @@ void compression() {
 }
 
 void decompression() {
-    for(int i = 0; i < num_samples; i ++){
+    int i;
+    for(i = 0; i < num_samples; i ++){
         int sample = ~(compressed_samples[i]);
         int sign = (sample & 0x80) >> 7;
         unsigned int sample_magnitude = codewordDecompression(sample) - 33; 
@@ -229,7 +230,7 @@ void decompression() {
     }
 }
 
-char codewordDecompression(char codeword){
+unsigned int codewordDecompression(char codeword){
     int chord = (codeword & 0x70) >> 4;
     int step = (codeword & 0x0F);
     int msb, lsb = 1;
