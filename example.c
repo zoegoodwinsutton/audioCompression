@@ -39,8 +39,8 @@ int main(){
         printf("%d ", sample_data[j]);
     }
     printf("Writing WAV file");
-    FILE* outfile = fopen("output.wav", "rb");
-    writeWaveFileSamples(outfile);
+    // FILE* outfile = fopen("output.wav", "rb");
+    // writeWaveFileSamples(outfile);
 }
 int readWaveHeader(FILE *ptr){
     int read = 0;
