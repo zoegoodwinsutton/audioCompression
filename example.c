@@ -165,7 +165,9 @@ int codewordCompression( unsigned int sample_magnitude, int sign){
         printf("1");
         chord = 0x7;
         step = (sample_magnitude >> 8) & 0xF;
-        tmp = (sign << 7) & (chord << 4) & step;
+        printf("step %d ", step)
+        tmp = (sign << 7) | (chord << 4) | step;
+        printf("tmp %d ", tmp)
         return tmp;
     } 
         if (sample_magnitude & (1 << 11)){
