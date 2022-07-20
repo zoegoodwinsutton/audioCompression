@@ -40,6 +40,10 @@ int main(){
     }
     printf("Writing WAV file\n");
     outfile = fopen("output.wav", "wb");
+    if(outfile == NULL){
+        printf("Unable to open file.\n");
+        exit(1);
+    }
     fclose(outfile);
     // writeWaveFileSamples(outfile);
 }
