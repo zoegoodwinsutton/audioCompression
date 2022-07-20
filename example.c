@@ -5,6 +5,8 @@
 #include "wave.h"
 void readWaveFileSamples(FILE *ptr);
 int readWaveHeader(FILE *ptr);
+void compression();
+void decompression();
 
 FILE *ptr;
 char *filename;
@@ -29,9 +31,9 @@ int main(){
          printf("%d ", compressed_samples[i]);
     }
     decompression();
-    int i;
-    for(i = 0; i < num_samples; i++){
-        printf("%d ", sample_data[i]);
+    int j;
+    for(j = 0; j < num_samples; j++){
+        printf("%d ", sample_data[j]);
     }
 }
 int readWaveHeader(FILE *ptr){
@@ -212,7 +214,8 @@ char codewordCompression( unsigned int sample_magnitude, int sign){
 void compression() {
     compressed_samples = calloc(num_samples, sizeof(char));
     //check for enough memory
-    for(int i = 0; i < num_samples; i ++){
+    int i;
+    for(i = 0; i < num_samples; i ++){
         int sample = (sample_data[i] >> 2);
         int sign = signum(sample);
         unsigned int sample_magnitude = magnitude(sample) + 33; //from slides??
@@ -230,6 +233,7 @@ void decompression() {
         else sample = -sample_magnitude;
         sample_data[i] = sample << 2;
     }
+    return
 }
 
 unsigned int codewordDecompression(char codeword){
