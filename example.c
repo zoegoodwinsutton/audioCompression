@@ -28,7 +28,7 @@ int main(){
     readWaveFileSamples(ptr);
 
     // compression();
-    // int i;
+    int i;
     // printf("\n");
     // for(i = 0; i < num_samples; i++){
     //      printf("%d ", compressed_samples[i]);
