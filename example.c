@@ -39,10 +39,17 @@ int main(){
         printf("%d ", sample_data[j]);
     }
     printf("\nWriting WAV file\n");
-    outfile = fopen("output.txt", "w");
+    outfile = fopen("output.wav", "wb");
     if(outfile == NULL){
         printf("Unable to open file.\n");
         exit(1);
+    }
+    int i ;
+    long size_of_each_sample = (header.channels * header.bits_per_sample) / 8;
+    for(i =0; i < num_samples; i++){
+        buffer2[0] = sample_data[i] & 0x000000FF;
+        buffer2[1] = (sample_data[i] & 0X0000FF00) >> 8;
+        fwrite(buffer2,size_of_each_sample,1,outfile);
     }
     fclose(outfile);
     // writeWaveFileSamples(outfile);
