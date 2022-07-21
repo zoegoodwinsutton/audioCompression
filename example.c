@@ -49,6 +49,7 @@ int main(){
         buffer2[0] = sample_data[i] & 0x000000FF;
         buffer2[1] = (sample_data[i] & 0X0000FF00) >> 8;
         fwrite(buffer2,size_of_each_sample,1,outfile);
+        printf("do we get here\n");
     }
     fclose(outfile);
     // writeWaveFileSamples(outfile);
