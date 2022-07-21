@@ -44,7 +44,6 @@ int main(){
         printf("Unable to open file.\n");
         exit(1);
     }
-    int i ;
     long size_of_each_sample = (header.channels * header.bits_per_sample) / 8;
     for(i =0; i < num_samples; i++){
         buffer2[0] = sample_data[i] & 0x000000FF;
