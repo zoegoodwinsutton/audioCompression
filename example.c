@@ -26,7 +26,7 @@ int main(){
         exit(1);
     }
     readWaveHeader(outfile);
-    readWaveFileSamples(ptr);
+    readWaveFileSamples(fp);
 
     // compression();
     int i;
