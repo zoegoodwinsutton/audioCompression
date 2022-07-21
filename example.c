@@ -27,18 +27,18 @@ int main(){
     readWaveHeader(ptr);
     readWaveFileSamples(ptr);
 
-    compression();
-    int i;
-    printf("\n");
-    for(i = 0; i < num_samples; i++){
-         printf("%d ", compressed_samples[i]);
-    }
-    decompression();
-    int j;
-    printf("\n");
-    for(j = 0; j < num_samples; j++){
-        printf("%d ", sample_data[j]);
-    }
+    // compression();
+    // int i;
+    // printf("\n");
+    // for(i = 0; i < num_samples; i++){
+    //      printf("%d ", compressed_samples[i]);
+    // }
+    // decompression();
+    // int j;
+    // printf("\n");
+    // for(j = 0; j < num_samples; j++){
+    //     printf("%d ", sample_data[j]);
+    // }
     printf("\nWriting WAV file\n");
     
     if(outfile == NULL){
