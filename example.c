@@ -4,12 +4,12 @@
 #include <stdlib.h>
 #include "wave.h"
 void readWaveFileSamples(FILE *ptr);
-int readWaveHeader(FILE *ptr, FILE *outfile);
+int readWaveHeader(FILE *new_fp);
 void writeWaveFileSamples();
 void compression();
 void decompression();
 
-FILE *ptr;
+FILE *fp;
 char *filename;
 struct HEADER header;
 unsigned char buffer4[4];
@@ -57,7 +57,7 @@ int main(){
     fclose(outfile);
     // writeWaveFileSamples(outfile);
 }
-int readWaveHeader(FILE *ptr, FILE *new_ptr){
+int readWaveHeader( FILE *new_fp){
         int read = 0;
 
     printf("Reading Wave File Headers.... \n");
