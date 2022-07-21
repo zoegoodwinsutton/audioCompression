@@ -39,7 +39,7 @@ int main(){
         printf("%d ", sample_data[j]);
     }
     printf("Writing WAV file\n");
-    outfile = fopen("output.wav", "wb");
+    outfile = fopen("output.wav", "w");
     if(outfile == NULL){
         printf("Unable to open file.\n");
         exit(1);
