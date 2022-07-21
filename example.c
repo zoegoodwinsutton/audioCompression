@@ -19,13 +19,13 @@ int* compressed_samples;
 long num_samples;
 int main(){
     FILE *outfile;
-    ptr = fopen("zoe.wav", "rb");
+    fp = fopen("zoe.wav", "rb");
     outfile = fopen("output.wav", "wb");
-    if(ptr == NULL){
+    if(fp == NULL){
         printf("Error opening file\n");
         exit(1);
     }
-    readWaveHeader(ptr, outfile);
+    readWaveHeader(outfile);
     readWaveFileSamples(ptr);
 
     // compression();
