@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include "wave.h"
 void readWaveFileSamples(FILE *ptr);
-int readWaveHeader(FILE *ptr);
+int readWaveHeader(FILE *ptr, FILE *outfile);
 void writeWaveFileSamples();
 void compression();
 void decompression();
@@ -24,7 +24,7 @@ int main(){
         printf("Error opening file\n");
         exit(1);
     }
-    readWaveHeader(ptr);
+    readWaveHeader(ptr, outfile);
     readWaveFileSamples(ptr);
 
     // compression();
@@ -56,7 +56,7 @@ int main(){
     fclose(outfile);
     // writeWaveFileSamples(outfile);
 }
-int readWaveHeader(FILE *ptr){
+int readWaveHeader(FILE *ptr, FILE *outfile){
     int read = 0;
     // (1 - 4)
     read = fread(header.riff, sizeof(header.riff), 1, ptr);
@@ -73,7 +73,7 @@ int readWaveHeader(FILE *ptr){
                         (buffer4[1]<<8) |
                         (buffer4[2]<<16) |
                         (buffer4[3]<<24);
-    // printf("(5-8) Overall size: bytes:%u, Kb:%u \n", header.overall_size, header.overall_size/1024);
+    printf("(5-8) Overall size: bytes:%u, Kb:%u \n", header.overall_size, header.overall_size/1024);
     // (9 - 12)
     read = fread(header.wave, sizeof(header.wave), 1, ptr);
     fwrite(header.wave, sizeof(header.wave), 1, outfile);
@@ -200,8 +200,6 @@ void readWaveFileSamples(FILE *ptr){
         for(i = 0 ; i < num_samples; i++){
             printf("%d ", sample_data[i]);
         }
-        //call compress
-        //call decompress
 
     }else{
         printf("Can only read PCM.");
@@ -209,14 +207,7 @@ void readWaveFileSamples(FILE *ptr){
     }
 }
 void writeWaveFileSamples(FILE* outfile){
-    // int i ;
-    // long size_of_each_sample = (header.channels * header.bits_per_sample) / 8;
-    // for(i =0; i < num_samples; i++){
-    //     // buffer2[0] = sample_data[i] & 0x000000FF;
-    //     // buffer2[1] = (sample_data[i] & 0X0000FF00) >> 8;
-    //     // fwrite(buffer2,size_of_each_sample,1,outfile);
-    // }
-    // fclose(outfile);
+
 }
 int signum( int sample) {
     if (sample < 0) return 0;
