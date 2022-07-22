@@ -19,8 +19,8 @@ int* compressed_samples;
 long num_samples;
 int main(){
     FILE *outfile;
-    fp = fopen("audio.wav", "rb");
-    outfile = fopen("output.wav", "wb");
+    fp = fopen("zoe.wav", "rb");
+    outfile = fopen("new_zoe.wav", "wb");
     // if(fp == NULL){
     //     printf("Error opening file\n");
     //     exit(1);
