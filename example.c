@@ -436,34 +436,38 @@ void compression() {
     compressed_samples = calloc(num_samples, sizeof(char));
     //check for enough memory
     int i;
+    printf("Starting compression...\n");
     for(i = 0; i < num_samples; i ++){
-        printf("\n sample before %d, %d ", sample_data[i], i);
+        // printf("\n sample before %d, %d ", sample_data[i], i);
         int sample = (sample_data[i] >> 2);
-        printf("sample after %d ", sample);
+        // printf("sample after %d ", sample);
         int sign = signum(sample);
-        printf("sign %d ", sign);
+        // printf("sign %d ", sign);
         unsigned int sample_magnitude = magnitude(sample) + 33; //from slides??
-        printf("magnitude %d ", sample_magnitude);
+        // printf("magnitude %d ", sample_magnitude);
         compressed_samples[i] = ~codewordCompression(sample_magnitude, sign);
-        printf(" compressed %d ", compressed_samples[i]);
+        // printf(" compressed %d ", compressed_samples[i]);
         
     }
+    printf("Finished compression!\n");
 }
 
 void decompression() {
     int i;
+    printf("Starting decompression...\n");
     for(i = 0; i < num_samples; i ++){
-        printf("\n sample before %d, %d ", compressed_samples[i], i);
+        // printf("\n sample before %d, %d ", compressed_samples[i], i);
         int sample = ~(compressed_samples[i]);
-        printf("sample after %d ", sample);
+        // printf("sample after %d ", sample);
         int sign = (sample & 0x80) >> 7;
-        printf("sign %d ", sign);
+        // printf("sign %d ", sign);
         unsigned int sample_magnitude = (codewordDecompression(sample) - 33);
-        printf(" magnitude %d ", sample_magnitude); 
+        // printf(" magnitude %d ", sample_magnitude); 
         if(sign == 1) sample = sample_magnitude;
         else sample = -sample_magnitude;
-        printf("sample mag %d ", sample);
-        printf("sample shift %d ", (sample<<2));
+        // printf("sample mag %d ", sample);
+        // printf("sample shift %d ", (sample<<2));
         sample_data[i] = sample << 2;
     }
+    printf("Finished decompression!\n");
 }
