@@ -153,9 +153,9 @@ int readWaveHeader( FILE *new_fp){
     header.bits_per_sample = buffer2[0] | (buffer2[1] << 8);
     printf("(35-36) Bits per sample: %u \n", header.bits_per_sample);
     read = fread(buffer4, sizeof(buffer4), 1,fp);
-    if(strcmp(buffer4, "LIST")){
-        printf("I SEE A LIST\n");
-    }
+    // if(strcmp(buffer4, "LIST")){
+    //     printf("I SEE A LIST\n");
+    // }
     read = fread(buffer4, sizeof(buffer4), 1,fp);
     int list_size = buffer4[0] |	(buffer4[1] << 8) |	(buffer4[2] << 16) | (buffer4[3] << 24 );
     int i;
