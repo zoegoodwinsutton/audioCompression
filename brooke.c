@@ -23,8 +23,8 @@ int main(int argc, char **argv){
         exit(1);
     }
     FILE *outfile;
-    fp = fopen(argv[1], "rb");
-    outfile = fopen("output.wav", "wb");
+    fp = fopen("audio.wav", "rb");
+    //outfile = fopen("output.wav", "wb");
     // if(fp == NULL){
     //     printf("Error opening file\n");
     //     exit(1);
@@ -169,123 +169,6 @@ int readWaveHeader( FILE *new_fp){
     printf("(41-44) Size of data chunk: %u \n", header.data_size);
 
     printf("COMPLETED Reading Wave File Headers \n\n");
-//     int read = 0;
-//     // (1 - 4)
-//     read = fread(header.riff, sizeof(header.riff), 1, ptr);
-//     fwrite(header.riff, sizeof(header.riff), 1, outfile);
-//     // (5 - 8)
-//     read = fread(buffer4, sizeof(buffer4), 1, ptr);
-//     fwrite(&buffer4[0], sizeof(buffer4[0]), 1, outfile);
-//     fwrite(&buffer4[1], sizeof(buffer4[1]), 1, outfile);
-//     fwrite(&buffer4[2], sizeof(buffer4[2]), 1, outfile);
-//     fwrite(&buffer4[3], sizeof(buffer4[3]), 1, outfile);
-//     // printf("%u %u %u %u\n", buffer4[0], buffer4[1], buffer4[2], buffer4[3]);
-//     // convert little endian to big endian 4 byte int
-//     header.overall_size  = buffer4[0] |(buffer4[1]<<8) |(buffer4[2]<<16) | (buffer4[3]<<24);
-//     printf("(5-8) Overall size: bytes:%u, Kb:%u \n", header.overall_size, header.overall_size/1024);
-//     // (9 - 12)
-//     read = fread(header.wave, sizeof(header.wave), 1, ptr);
-//     fwrite(header.wave, sizeof(header.wave), 1, outfile);
-//     // printf("(9-12) Wave marker: %s\n", header.wave);
-//     // (13 - 16 )
-//     read = fread(header.fmt_chunk_marker, sizeof(header.fmt_chunk_marker), 1, ptr);
-//     fwrite(header.fmt_chunk_marker, sizeof(header.fmt_chunk_marker), 1, outfile);
-//     // printf("(13-16) Fmt marker: %s\n", header.fmt_chunk_marker);
-//     // ( 17 - 20 )
-//     read = fread(buffer4, sizeof(buffer4), 1, ptr);
-//     fwrite(&buffer4[0], sizeof(buffer4[0]), 1, outfile);
-//     fwrite(&buffer4[1], sizeof(buffer4[1]), 1, outfile);
-//     fwrite(&buffer4[2], sizeof(buffer4[2]), 1, outfile);
-//     fwrite(&buffer4[3], sizeof(buffer4[3]), 1, outfile);
-//     // printf("%u %u %u %u\n", buffer4[0], buffer4[1], buffer4[2], buffer4[3]);
-
-//  // convert little endian to big endian 4 byte integer
-//     header.length_of_fmt = buffer4[0] | (buffer4[1] << 8) |(buffer4[2] << 16) |(buffer4[3] << 24);
-    
-//     printf("(17-20) Length of Fmt header: %u \n", header.length_of_fmt);
-//     // ( 21 - 22 )
-//     read = fread(buffer2, sizeof(buffer2), 1, ptr); 
-//     fwrite(&buffer2, sizeof(buffer2), 1, outfile);
-//     // printf("%u %u \n", buffer2[0], buffer2[1]);
-//     header.format_type = buffer2[0] | (buffer2[1] << 8);
-
-//     char format_name[10] = "";
-//     if (header.format_type == 1)
-//         strcpy(format_name,"PCM");
-//     else if (header.format_type == 6)
-//         strcpy(format_name, "A-law");
-//     else if (header.format_type == 7)
-//         strcpy(format_name, "Mu-law");
-//     printf("(21-22) Format type: %u %s \n", header.format_type, format_name);
-//     // ( 23 - 24 )
-//     read = fread(buffer2, sizeof(buffer2), 1, ptr);
-//     fwrite(&buffer2, sizeof(buffer2), 1, outfile);
-//     printf("%u %u \n", buffer2[0], buffer2[1]);
-//     header.channels = buffer2[0] | (buffer2[1] << 8);
-//     printf("(23-24) Channels: %u \n", header.channels);
-//     // (25 - 28)
-//     read = fread(buffer4, sizeof(buffer4), 1, ptr);
-//     fwrite(&buffer4[0], sizeof(buffer4[0]), 1, outfile);
-//     fwrite(&buffer4[1], sizeof(buffer4[1]), 1, outfile);
-//     fwrite(&buffer4[2], sizeof(buffer4[2]), 1, outfile);
-//     fwrite(&buffer4[3], sizeof(buffer4[3]), 1, outfile);
-//     // printf("%u %u %u %u\n", buffer4[0], buffer4[1], buffer4[2], buffer4[3]);
-//     header.sample_rate = buffer4[0] |
-//                         (buffer4[1] << 8) |
-//                         (buffer4[2] << 16) |
-//                         (buffer4[3] << 24);
-//     // printf("(25-28) Sample rate: %u\n", header.sample_rate);
-//     // ( 29 - 32 )
-//     read = fread(buffer4, sizeof(buffer4), 1, ptr);
-//     fwrite(&buffer4[0], sizeof(buffer4[0]), 1, outfile);
-//     fwrite(&buffer4[1], sizeof(buffer4[1]), 1, outfile);
-//     fwrite(&buffer4[2], sizeof(buffer4[2]), 1, outfile);
-//     fwrite(&buffer4[3], sizeof(buffer4[3]), 1, outfile);
-//     // printf("%u %u %u %u\n", buffer4[0], buffer4[1], buffer4[2], buffer4[3]);
-//     header.byterate  = buffer4[0] |
-//                         (buffer4[1] << 8) |
-//                         (buffer4[2] << 16) |
-//                         (buffer4[3] << 24);
-//     // printf("(29-32) Byte Rate: %u , Bit Rate:%u\n", header.byterate, header.byterate*8);
-//     // (33 - 34) 
-//     read = fread(buffer2, sizeof(buffer2), 1, ptr);
-//     fwrite(&buffer2, sizeof(buffer2), 1, outfile);
-//     // printf("%u %u \n", buffer2[0], buffer2[1]);
-//     header.block_align = buffer2[0] |
-//                     (buffer2[1] << 8);
-//     // printf("(33-34) Block Alignment: %u \n", header.block_align);
-//     // ( 35 - 36 )
-//     read = fread(buffer2, sizeof(buffer2), 1, ptr);
-//     fwrite(&buffer2, sizeof(buffer2), 1, outfile);
-//     // printf("%u %u \n", buffer2[0], buffer2[1]);
-//     header.bits_per_sample = buffer2[0] |
-//                     (buffer2[1] << 8);
-//     // printf("(35-36) Bits per sample: %u \n", header.bits_per_sample);
-//     // (37 - 40)
-//     read = fread(header.data_chunk_header, sizeof(header.data_chunk_header), 1, ptr);
-//     fwrite(&header.data_chunk_header, sizeof(header.data_chunk_header), 1, outfile);
-//     // printf("(37-40) Data Marker: %s \n", header.data_chunk_header);
-//     // ( 41 - 44)
-//     read = fread(buffer4, sizeof(buffer4), 1, ptr);
-//     fwrite(&buffer4[0], sizeof(buffer4[0]), 1, outfile);
-//     fwrite(&buffer4[1], sizeof(buffer4[1]), 1, outfile);
-//     fwrite(&buffer4[2], sizeof(buffer4[2]), 1, outfile);
-//     fwrite(&buffer4[3], sizeof(buffer4[3]), 1, outfile);
-//     printf("%u %u %u %u\n", buffer4[0], buffer4[1], buffer4[2], buffer4[3]);
-//     header.data_size = buffer4[0] |
-//                     (buffer4[1] << 8) |
-//                     (buffer4[2] << 16) |
-//                     (buffer4[3] << 24 );
-//     printf("(41-44) Size of data chunk: %u \n", header.data_size);
-//     // calculate no.of samples
-//     long num_samples = (8 * header.data_size) / (header.channels * header.bits_per_sample);
-//     printf("Number of samples:%lu \n", num_samples);
-
-//     long size_of_each_sample = (header.channels * header.bits_per_sample) / 8;
-//     printf("Size of each sample:%ld bytes\n", size_of_each_sample);
-//     // calculate duration of file
-//     float duration_in_seconds = (float) header.overall_size / header.byterate;
-//     printf("Approx.Duration in seconds=%f\n", duration_in_seconds);
 }
 void readWaveFileSamples(){
     if(header.format_type == 1){
@@ -330,58 +213,58 @@ int codewordCompression( unsigned int sample_magnitude, int sign){
     int tmp;
 
     if (sample_magnitude & (1 << 12)){
-        // printf("1");
+        printf("1 ");
         chord = 0x7;
         step = (sample_magnitude >> 8) & 0xF;
         // printf("step %d ", step);
         tmp = (sign << 7) | (chord << 4) | step;
-        // printf("tmp %d ", tmp);
+        printf("tmp %d ", tmp);
         return (int)tmp;
     } 
         if (sample_magnitude & (1 << 11)){
-        // printf("2");
+        printf("2 ");
         chord = 0x6;
         step = (sample_magnitude >> 7) & 0xF;
         tmp = (sign << 7) | (chord << 4) | step;
         return (int)tmp;
     }
         if (sample_magnitude & (1 << 10)){
-        // printf("3");
+        printf("3 ");
         chord = 0x5;
         step = (sample_magnitude >> 6) & 0xF;
         tmp = (sign << 7) | (chord << 4) | step;
         return (int)tmp;
     }
         if (sample_magnitude & (1 << 9)){
-        // printf("4");
+        printf("4 ");
         chord = 0x4;
         step = (sample_magnitude >> 5) & 0xF;
         tmp = (sign << 7) | (chord << 4) | step;
         return (int)tmp;
     }
         if (sample_magnitude & (1 << 8)){
-        // printf("5");
+        printf("5 ");
         chord = 0x3;
         step = (sample_magnitude >> 4) & 0xF;
         tmp = (sign << 7) | (chord << 4) | step;
         return (int)tmp;
     }
         if (sample_magnitude & (1 << 7)){
-        // printf("6");
+        printf("6 ");
         chord = 0x2;
         step = (sample_magnitude >> 3) & 0xF;
         tmp = (sign << 7) | (chord << 4) | step;
         return (int)tmp;
     }
         if (sample_magnitude & (1 << 6)){
-        // printf("7");
+        printf("7 ");
         chord = 0x1;
         step = (sample_magnitude >> 2) & 0xF;
         tmp = (sign << 7) | (chord << 4) | step;
         return (int)tmp;
     }
         if (sample_magnitude & (1 << 5)){
-        // printf("8");
+        printf("8 ");
         chord = 0x0;
         step = (sample_magnitude >> 1) & 0xF;
         tmp = ((sign << 7) | (chord << 4) | step);
