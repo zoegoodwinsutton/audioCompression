@@ -17,14 +17,30 @@ unsigned char buffer2[2];
 int* sample_data;
 int* compressed_samples;
 long num_samples;
+int one = 0;
+int two = 0;
+int three = 0;
+int four = 0;
+int five = 0;
+int six = 0;
+int seven = 0;
+int eight = 0;
+int onea = 0;
+int twoa = 0;
+int threea = 0;
+int foura = 0;
+int fivea = 0;
+int sixa = 0;
+int sevena = 0;
+int eighta = 0;
 int main(){
     FILE *outfile;
-    fp = fopen("zoe.wav", "rb");
-    outfile = fopen("output.wav", "wb");
-    if(fp == NULL){
-        printf("Error opening file\n");
-        exit(1);
-    }
+    fp = fopen("audio.wav", "rb");
+    // outfile = fopen("output.wav", "wb");
+    // if(fp == NULL){
+    //     printf("Error opening file\n");
+    //     exit(1);
+    // }
     readWaveHeader(outfile);
     readWaveFileSamples();
 
