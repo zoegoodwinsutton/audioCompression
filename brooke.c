@@ -17,10 +17,14 @@ unsigned char buffer2[2];
 int* sample_data;
 int* compressed_samples;
 long num_samples;
-int main(){
+int main(int argc, char **argv){
+    if (argc < 2) {
+        printf("\n Please input a valid .wav file \n");
+        exit(1);
+    }
     FILE *outfile;
-    fp = fopen("audio.wav", "rb");
-    //outfile = fopen("new_audio.wav", "wb");
+    fp = fopen(argv[1], "rb");
+    outfile = fopen("output.wav", "wb");
     // if(fp == NULL){
     //     printf("Error opening file\n");
     //     exit(1);
@@ -136,8 +140,8 @@ int readWaveHeader( FILE *new_fp){
     fwrite(&buffer2, sizeof(buffer2), 1, new_fp);
     header.bits_per_sample = buffer2[0] | (buffer2[1] << 8);
     printf("(35-36) Bits per sample: %u \n", header.bits_per_sample);
-    read = fread(buffer4, sizeof(buffer4), 1,fp);
-    if(strcmp(buffer4, "LIST") == 0 ){
+    read = fread(header.data_chunk_header, sizeof(header.data_chunk_header), 1, fp);
+    if(strcmp(header.data_chunk_header, "LIST") == 0 ){
         printf("I SEE A LIST\n");
         read = fread(buffer4, sizeof(buffer4), 1,fp);
         int list_size = buffer4[0] |	(buffer4[1] << 8) |	(buffer4[2] << 16) | (buffer4[3] << 24 );
@@ -147,10 +151,11 @@ int readWaveHeader( FILE *new_fp){
             read = fread(buffer4, sizeof(buffer4), 1,fp);
         }
         read = fread(buffer2, sizeof(buffer2), 1,fp);
+        read = fread(header.data_chunk_header, sizeof(header.data_chunk_header), 1, fp);
     }
     
     // 37 - 40: data string - “data” chunk header. Marks the beginning of the data section
-    read = fread(header.data_chunk_header, sizeof(header.data_chunk_header), 1, fp);
+    // read = fread(header.data_chunk_header, sizeof(header.data_chunk_header), 1, fp);
     fwrite(&header.data_chunk_header, sizeof(header.data_chunk_header), 1, new_fp);
     printf("(37-40) Data Marker: %s \n", header.data_chunk_header);
     printf("size of buffer4: %d ", sizeof(buffer4));
@@ -458,4 +463,3 @@ void decompression() {
         sample_data[i] = sample << 2;
     }
 }
-
