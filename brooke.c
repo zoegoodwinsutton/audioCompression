@@ -44,6 +44,10 @@ int main(){
 
     compression();
     printf("\n%d", compressed_samples[num_samples]);
+    printf("\n%d", compressed_samples[num_samples-1]);
+    printf("\n%d", compressed_samples[num_samples-2]);
+    printf("\n%d", compressed_samples[num_samples-3]);
+    printf("\n%d", compressed_samples[num_samples+1]);
     printf("\none:%d, two:%d, three:%d, four:%d, five:%d, six:%d, seven:%d, eight:%d\n", one, two, three, four, five, six, seven, eight);
     decompression();
 }
