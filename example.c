@@ -146,6 +146,9 @@ int readWaveHeader( FILE *new_fp){
 
     // 37 - 40: data string - “data” chunk header. Marks the beginning of the data section
     read = fread(header.data_chunk_header, sizeof(header.data_chunk_header), 1, fp);
+    if(strcmp(header.data_chunk_header, "LIST") == 0){
+        printf("I SEE A LIST!\n");
+    }
     fwrite(&header.data_chunk_header, sizeof(header.data_chunk_header), 1, new_fp);
     printf("(37-40) Data Marker: %s \n", header.data_chunk_header);
 
