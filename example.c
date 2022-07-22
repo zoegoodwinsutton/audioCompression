@@ -19,10 +19,10 @@ int* compressed_samples;
 long num_samples;
 int main(){
     FILE *outfile;
-    fp = fopen("zoe.wav", "rb");
+    fp = fopen("audio.wav", "rb");
     outfile = fopen("output.wav", "wb");
     if(fp == NULL){
-        printf("Error opening file\n");
+        printf("Error opening input file\n");
         exit(1);
     }
     readWaveHeader(outfile);
@@ -43,7 +43,7 @@ int main(){
     printf("\nWriting WAV file\n");
     
     if(outfile == NULL){
-        printf("Unable to open file.\n");
+        printf("Unable to open output file.\n");
         exit(1);
     }
     long size_of_each_sample = (header.channels * header.bits_per_sample) / 8;
