@@ -17,9 +17,9 @@ unsigned char buffer2[2];
 int* sample_data;
 int* compressed_samples;
 long num_samples;
-int main(){
+int main(int argc, char **argv){
     FILE *outfile;
-    fp = fopen("audio.wav", "rb");
+    fp = fopen(argv[1], "rb");
     outfile = fopen("output.wav", "wb");
     if(fp == NULL){
         printf("Error opening input file\n");
