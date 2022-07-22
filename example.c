@@ -332,7 +332,7 @@ int magnitude (int sample) {
 int codewordCompression( unsigned int sample_magnitude, int sign){
     int chord, step;
     int tmp;
-
+    printf("in codeword compression");
     if (sample_magnitude & (1 << 12)){
         // printf("1");
         chord = 0x7;
@@ -440,13 +440,16 @@ void compression() {
     for(i = 0; i < num_samples; i ++){
         // printf("\n sample before %d, %d ", sample_data[i], i);
         printf("%d ", sample_data[i]);
-        // int sample = (sample_data[i] >> 2);
+        int sample = (sample_data[i] >> 2);
         // printf("sample after %d ", sample);
-        // int sign = signum(sample);
+        int sign = signum(sample);
         // printf("sign %d ", sign);
-        // unsigned int sample_magnitude = magnitude(sample) + 33; //from slides??
+        unsigned int sample_magnitude = magnitude(sample) + 33; //from slides??
         // printf("magnitude %d ", sample_magnitude);
-        // compressed_samples[i] = ~codewordCompression(sample_magnitude, sign);
+        int temp = ~codewordCompression(sample_magnitude, sign);
+        printf("out of codeword");
+        compressed_samples[i] = temp;
+        
         // printf(" compressed %d ", compressed_samples[i]);
         
     }
