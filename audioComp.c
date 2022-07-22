@@ -249,6 +249,7 @@ void compressDataSamples() {
     }
     int i;
     for (i = 0; i < num_samples; i++) {
+        printf("%d ", sample_data[i])
         int sample = (sample_data[i] >> 2);
         short sign = signum(sample);
         unsigned short magnitude = getMagnitude(sample) + 33;
