@@ -18,13 +18,20 @@ int* sample_data;
 int* compressed_samples;
 long num_samples;
 int main(int argc, char **argv){
+    if(argc < 2){
+        printf("must add CLI arg for input .wav file.\n");
+        exit(1);
+    }
     FILE *outfile;
     fp = fopen(argv[1], "rb");
-    outfile = fopen("output.wav", "wb");
     if(fp == NULL){
         printf("Error opening input file\n");
         exit(1);
     }
+    char[] output_filename = "output_"
+    strcat(output_filename, argv[1]);
+    outfile = fopen(output_filename, "wb");
+    
     readWaveHeader(outfile);
     readWaveFileSamples(fp);
 
