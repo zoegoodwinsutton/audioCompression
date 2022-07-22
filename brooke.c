@@ -43,7 +43,7 @@ int main(){
     readWaveFileSamples(ptr);
 
     compression();
-    printf("one:%d, two:%d, three:%d, four:%d, five:%d, six:%d, seven:%d, eight:%d\n", one, two, three, four, five, six, seven, eight);
+    printf("\none:%d, two:%d, three:%d, four:%d, five:%d, six:%d, seven:%d, eight:%d\n", one, two, three, four, five, six, seven, eight);
     decompression();
 }
 int readWaveHeader(FILE *ptr){
@@ -279,20 +279,19 @@ unsigned int codewordDecompression(int codeword){
 }
 
 void compression() {
-    compressed_samples = calloc(num_samples, sizeof(char));
+    compressed_samples = calloc(num_samples, sizeof(int));
     //check for enough memory
     int i;
     for(i = 0; i < num_samples; i ++){
         //printf("\n sample before %d, %d ", sample_data[i], i);
         int sample = (sample_data[i] >> 2);
         //printf("sample after %d ", sample);
-       // int sign = signum(sample);
+       int sign = signum(sample);
         //printf("sign %d ", sign);
-       // unsigned int sample_magnitude = magnitude(sample) + 33; //from slides??
+       unsigned int sample_magnitude = magnitude(sample) + 33; //from slides??
         //printf("magnitude %d ", sample_magnitude);
-       // compressed_samples[i] = ~codewordCompression(sample_magnitude, sign);
-        //printf(" compressed %d ", compressed_samples[i]);
-        
+       compressed_samples[i] = ~codewordCompression(sample_magnitude, sign);
+        //printf(" compressed %d ", compressed_samples[i]);   
     }
 }
 
