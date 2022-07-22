@@ -148,7 +148,8 @@ int readWaveHeader( FILE *new_fp){
     read = fread(header.data_chunk_header, sizeof(header.data_chunk_header), 1, fp);
     if(strcmp(header.data_chunk_header, "LIST") == 0){
         printf("I SEE A LIST!\n");
-        for(i = 1; i < 7 ; i++){
+        int i;
+        for(i = 0; i < 7 ; i++){
             read = fread(buffer4, sizeof(buffer4), 1, fp);
         }
         read = fread(buffer2, sizeof(buffer2), 1, fp);
