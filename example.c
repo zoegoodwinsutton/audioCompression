@@ -3,7 +3,7 @@
 //#include <unistd.h>
 #include <stdlib.h>
 #include "wave.h"
-void readWaveFileSamples();
+void readWaveFileSamples(FILE *ptr);
 int readWaveHeader(FILE *new_fp);
 void writeWaveFileSamples();
 void compression();
@@ -17,22 +17,18 @@ unsigned char buffer2[2];
 int* sample_data;
 int* compressed_samples;
 long num_samples;
-int main(int argc, char **argv){
-    if (argc < 2) {
-        printf("\n Please input a valid .wav file \n");
+int main(){
+    FILE *outfile;
+    fp = fopen("zoe.wav", "rb");
+    outfile = fopen("output.wav", "wb");
+    if(fp == NULL){
+        printf("Error opening file\n");
         exit(1);
     }
-    FILE *outfile;
-    fp = fopen(argv[1], "rb");
-    outfile = fopen("new_audio.wav", "wb");
-    // if(fp == NULL){
-    //     printf("Error opening file\n");
-    //     exit(1);
-    // }
     readWaveHeader(outfile);
-    readWaveFileSamples();
+    readWaveFileSamples(fp);
 
-    //compression();
+    // compression();
     int i;
     // printf("\n");
     // for(i = 0; i < num_samples; i++){
@@ -41,9 +37,9 @@ int main(int argc, char **argv){
     // decompression();
     int j;
     printf("\n");
-    // for(j = 0; j < num_samples; j++){
-    //     printf("%d ", sample_data[j]);
-    // }
+    for(j = 0; j < num_samples; j++){
+        printf("%d ", sample_data[j]);
+    }
     printf("\nWriting WAV file\n");
     
     if(outfile == NULL){
@@ -55,6 +51,7 @@ int main(int argc, char **argv){
         buffer2[0] = sample_data[i] & 0x000000FF;
         buffer2[1] = (sample_data[i] & 0X0000FF00) >> 8;
         fwrite(buffer2,size_of_each_sample,1,outfile);
+        printf("do we get here\n");
     }
     printf("done writing to output\n");
     fclose(outfile);
@@ -140,24 +137,12 @@ int readWaveHeader( FILE *new_fp){
     fwrite(&buffer2, sizeof(buffer2), 1, new_fp);
     header.bits_per_sample = buffer2[0] | (buffer2[1] << 8);
     printf("(35-36) Bits per sample: %u \n", header.bits_per_sample);
-    read = fread(buffer4, sizeof(buffer4), 1,fp);
-    if(strcmp(buffer4, "LIST") == 0 ){
-        printf("I SEE A LIST\n");
-        read = fread(buffer4, sizeof(buffer4), 1,fp);
-        int list_size = buffer4[0] |	(buffer4[1] << 8) |	(buffer4[2] << 16) | (buffer4[3] << 24 );
-        int i;
-        printf("list size is %d\n", list_size);
-        for (i = 0; i < 6; i++){
-            read = fread(buffer4, sizeof(buffer4), 1,fp);
-        }
-        read = fread(buffer2, sizeof(buffer2), 1,fp);
-    }
-    
+
     // 37 - 40: data string - “data” chunk header. Marks the beginning of the data section
     read = fread(header.data_chunk_header, sizeof(header.data_chunk_header), 1, fp);
     fwrite(&header.data_chunk_header, sizeof(header.data_chunk_header), 1, new_fp);
     printf("(37-40) Data Marker: %s \n", header.data_chunk_header);
-    printf("size of buffer4: %d ", sizeof(buffer4));
+
     // 41 - 44: data size
     read = fread(buffer4, sizeof(buffer4), 1, fp);
     fwrite(&buffer4[0], sizeof(buffer4[0]), 1, new_fp);
@@ -286,7 +271,7 @@ int readWaveHeader( FILE *new_fp){
 //     float duration_in_seconds = (float) header.overall_size / header.byterate;
 //     printf("Approx.Duration in seconds=%f\n", duration_in_seconds);
 }
-void readWaveFileSamples(){
+void readWaveFileSamples(FILE *ptr){
     if(header.format_type == 1){
         printf("Number of channels %i", header.channels);
         long size_of_each_sample = (header.channels * header.bits_per_sample) / 8;
@@ -299,11 +284,11 @@ void readWaveFileSamples(){
         }
         int i;
         for(i = 0 ; i < num_samples; i++){
-            fread(buffer2, size_of_each_sample, 1, fp);
+            fread(buffer2, size_of_each_sample, 1, ptr);
             sample_data[i] = (buffer2[0]) | (buffer2[1] << 8);
         }
         for(i = 0 ; i < num_samples; i++){
-            // printf("%d ", sample_data[i]);
+            printf("%d ", sample_data[i]);
         }
 
     }else{
@@ -329,58 +314,58 @@ int codewordCompression( unsigned int sample_magnitude, int sign){
     int tmp;
 
     if (sample_magnitude & (1 << 12)){
-        // printf("1");
+        printf("1");
         chord = 0x7;
         step = (sample_magnitude >> 8) & 0xF;
-        // printf("step %d ", step);
+        printf("step %d ", step);
         tmp = (sign << 7) | (chord << 4) | step;
-        // printf("tmp %d ", tmp);
+        printf("tmp %d ", tmp);
         return (int)tmp;
     } 
         if (sample_magnitude & (1 << 11)){
-        // printf("2");
+        printf("2");
         chord = 0x6;
         step = (sample_magnitude >> 7) & 0xF;
         tmp = (sign << 7) | (chord << 4) | step;
         return (int)tmp;
     }
         if (sample_magnitude & (1 << 10)){
-        // printf("3");
+        printf("3");
         chord = 0x5;
         step = (sample_magnitude >> 6) & 0xF;
         tmp = (sign << 7) | (chord << 4) | step;
         return (int)tmp;
     }
         if (sample_magnitude & (1 << 9)){
-        // printf("4");
+        printf("4");
         chord = 0x4;
         step = (sample_magnitude >> 5) & 0xF;
         tmp = (sign << 7) | (chord << 4) | step;
         return (int)tmp;
     }
         if (sample_magnitude & (1 << 8)){
-        // printf("5");
+        printf("5");
         chord = 0x3;
         step = (sample_magnitude >> 4) & 0xF;
         tmp = (sign << 7) | (chord << 4) | step;
         return (int)tmp;
     }
         if (sample_magnitude & (1 << 7)){
-        // printf("6");
+        printf("6");
         chord = 0x2;
         step = (sample_magnitude >> 3) & 0xF;
         tmp = (sign << 7) | (chord << 4) | step;
         return (int)tmp;
     }
         if (sample_magnitude & (1 << 6)){
-        // printf("7");
+        printf("7");
         chord = 0x1;
         step = (sample_magnitude >> 2) & 0xF;
         tmp = (sign << 7) | (chord << 4) | step;
         return (int)tmp;
     }
         if (sample_magnitude & (1 << 5)){
-        // printf("8");
+        printf("8");
         chord = 0x0;
         step = (sample_magnitude >> 1) & 0xF;
         tmp = ((sign << 7) | (chord << 4) | step);
@@ -432,15 +417,15 @@ void compression() {
     //check for enough memory
     int i;
     for(i = 0; i < num_samples; i ++){
-        // printf("\n sample before %d, %d ", sample_data[i], i);
+        printf("\n sample before %d, %d ", sample_data[i], i);
         int sample = (sample_data[i] >> 2);
-        // printf("sample after %d ", sample);
+        printf("sample after %d ", sample);
         int sign = signum(sample);
-        // printf("sign %d ", sign);
+        printf("sign %d ", sign);
         unsigned int sample_magnitude = magnitude(sample) + 33; //from slides??
-        // printf("magnitude %d ", sample_magnitude);
+        printf("magnitude %d ", sample_magnitude);
         compressed_samples[i] = ~codewordCompression(sample_magnitude, sign);
-        // printf(" compressed %d ", compressed_samples[i]);
+        printf(" compressed %d ", compressed_samples[i]);
         
     }
 }
@@ -448,18 +433,17 @@ void compression() {
 void decompression() {
     int i;
     for(i = 0; i < num_samples; i ++){
-        // printf("\n sample before %d, %d ", compressed_samples[i], i);
+        printf("\n sample before %d, %d ", compressed_samples[i], i);
         int sample = ~(compressed_samples[i]);
-        // printf("sample after %d ", sample);
+        printf("sample after %d ", sample);
         int sign = (sample & 0x80) >> 7;
-        // printf("sign %d ", sign);
+        printf("sign %d ", sign);
         unsigned int sample_magnitude = (codewordDecompression(sample) - 33);
-        // printf(" magnitude %d ", sample_magnitude); 
+        printf(" magnitude %d ", sample_magnitude); 
         if(sign == 1) sample = sample_magnitude;
         else sample = -sample_magnitude;
-        // printf("sample mag %d ", sample);
-        // printf("sample shift %d ", (sample<<2));
+        printf("sample mag %d ", sample);
+        printf("sample shift %d ", (sample<<2));
         sample_data[i] = sample << 2;
     }
 }
-
