@@ -28,7 +28,7 @@ int main(int argc, char **argv){
         printf("Error opening input file\n");
         exit(1);
     }
-    char[] output_filename = "output_"
+    char output_filename[] = "output_";
     strcat(output_filename, argv[1]);
     outfile = fopen(output_filename, "wb");
     
