@@ -17,8 +17,12 @@ unsigned char buffer2[2];
 int* sample_data;
 int* compressed_samples;
 long num_samples;
-int main(){
-    ptr = fopen("brooke.wav", "rb");
+int main(int argc, int **argv){
+    if(argc > 2){
+        printf("CLI must include input .wav file.");
+        exit(1);
+    }
+    ptr = fopen(argv[1], "rb");
     if(ptr == NULL){
         perror("Error opening file\n");
         exit(1);
