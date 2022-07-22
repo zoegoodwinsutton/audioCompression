@@ -151,8 +151,13 @@ int readWaveHeader( FILE *new_fp){
         int i;
         for(i = 0; i < 7 ; i++){
             read = fread(buffer4, sizeof(buffer4), 1, fp);
+                fwrite(&buffer4[0], sizeof(buffer4[0]), 1, new_fp);
+                fwrite(&buffer4[1], sizeof(buffer4[1]), 1, new_fp);
+                fwrite(&buffer4[2], sizeof(buffer4[2]), 1, new_fp);
+                fwrite(&buffer4[3], sizeof(buffer4[3]), 1, new_fp);
         }
         read = fread(buffer2, sizeof(buffer2), 1, fp);
+        fwrite(&buffer2, sizeof(buffer2), 1, new_fp);
         read = fread(header.data_chunk_header, sizeof(header.data_chunk_header), 1, fp);
     }
     fwrite(&header.data_chunk_header, sizeof(header.data_chunk_header), 1, new_fp);
