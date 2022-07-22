@@ -17,6 +17,22 @@ unsigned char buffer2[2];
 int* sample_data;
 int* compressed_samples;
 long num_samples;
+int one = 0;
+int two = 0;
+int three = 0;
+int four = 0;
+int five = 0;
+int six = 0;
+int seven = 0;
+int eight = 0;
+int onea =0;
+int twoa = 0;
+int threea = 0;
+int foura = 0;
+int fivea = 0;
+int sixa = 0;
+int sevena = 0;
+int eighta = 0;
 int main(){
     ptr = fopen("audio.wav", "rb");
     if(ptr == NULL){
@@ -27,20 +43,8 @@ int main(){
     readWaveFileSamples(ptr);
 
     compression();
-    int i;
-    printf("\n");
-    for(i = 0; i < num_samples; i++){
-         printf("%d ", compressed_samples[i]);
-    }
+    printf("one:%d, two:%d, three:%d, four:%d, five:%d, six:%d, seven:%d, eight:%d\n", one, two, three, four, five, six, seven, eight);
     decompression();
-    int j;
-    printf("\n");
-    for(j = 0; j < num_samples; j++){
-        printf("%d ", sample_data[j]);
-    }
-    printf("Writing WAV file");
-    FILE* outfile = fopen("output.wav", "rb");
-    writeWaveFileSamples(outfile);
 }
 int readWaveHeader(FILE *ptr){
     int read = 0;
@@ -142,9 +146,9 @@ void readWaveFileSamples(FILE *ptr){
             fread(buffer2, size_of_each_sample, 1, ptr);
             sample_data[i] = (buffer2[0]) | (buffer2[1] << 8);
         }
-        for(i = 0 ; i < num_samples; i++){
-            printf("%d ", sample_data[i]);
-        }
+        // for(i = 0 ; i < num_samples; i++){
+        //     printf("%d ", sample_data[i]);
+        // }
         //call compress
         //call decompress
 
@@ -178,58 +182,56 @@ int codewordCompression( unsigned int sample_magnitude, int sign){
     int tmp;
 
     if (sample_magnitude & (1 << 12)){
-        printf("1 ");
+        one = one + 1;
         chord = 0x7;
         step = (sample_magnitude >> 8) & 0xF;
-        printf("step %d ", step);
         tmp = (sign << 7) | (chord << 4) | step;
-        printf("tmp %d ", tmp);
         return (int)tmp;
     } 
         if (sample_magnitude & (1 << 11)){
-        printf("2 ");
+        two = two + 1;
         chord = 0x6;
         step = (sample_magnitude >> 7) & 0xF;
         tmp = (sign << 7) | (chord << 4) | step;
         return (int)tmp;
     }
         if (sample_magnitude & (1 << 10)){
-        printf("3 ");
+        three = three + 1;
         chord = 0x5;
         step = (sample_magnitude >> 6) & 0xF;
         tmp = (sign << 7) | (chord << 4) | step;
         return (int)tmp;
     }
         if (sample_magnitude & (1 << 9)){
-        printf("4 ");
+        four = four + 1;
         chord = 0x4;
         step = (sample_magnitude >> 5) & 0xF;
         tmp = (sign << 7) | (chord << 4) | step;
         return (int)tmp;
     }
         if (sample_magnitude & (1 << 8)){
-        printf("5 ");
+        five = five + 1;
         chord = 0x3;
         step = (sample_magnitude >> 4) & 0xF;
         tmp = (sign << 7) | (chord << 4) | step;
         return (int)tmp;
     }
         if (sample_magnitude & (1 << 7)){
-        printf("6 ");
+        six = six + 1;
         chord = 0x2;
         step = (sample_magnitude >> 3) & 0xF;
         tmp = (sign << 7) | (chord << 4) | step;
         return (int)tmp;
     }
         if (sample_magnitude & (1 << 6)){
-        printf("7 ");
+        seven = seven + 1;
         chord = 0x1;
         step = (sample_magnitude >> 2) & 0xF;
         tmp = (sign << 7) | (chord << 4) | step;
         return (int)tmp;
     }
         if (sample_magnitude & (1 << 5)){
-        printf("8 ");
+        eight = eight + 1;
         chord = 0x0;
         step = (sample_magnitude >> 1) & 0xF;
         tmp = ((sign << 7) | (chord << 4) | step);
