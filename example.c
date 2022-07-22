@@ -44,9 +44,9 @@ int main(int argc, char **argv){
     // decompression();
     int j;
     printf("\n");
-    for(j = 0; j < num_samples; j++){
-        printf("%d ", sample_data[j]);
-    }
+    // for(j = 0; j < num_samples; j++){
+    //     printf("%d ", sample_data[j]);
+    // }
     printf("\nWriting WAV file\n");
     
     if(outfile == NULL){
@@ -58,7 +58,6 @@ int main(int argc, char **argv){
         buffer2[0] = sample_data[i] & 0x000000FF;
         buffer2[1] = (sample_data[i] & 0X0000FF00) >> 8;
         fwrite(buffer2,size_of_each_sample,1,outfile);
-        printf("do we get here\n");
     }
     printf("done writing to output\n");
     fclose(outfile);
