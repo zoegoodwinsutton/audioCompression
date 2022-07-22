@@ -43,7 +43,7 @@ int main(){
     readWaveFileSamples(ptr);
 
     compression();
-    print("one:%d, two:%d, three:%d, four:%d, five:%d, six:%d, seven:%d, eight:%d\n", one, two, three, four, five, six, seven, eight);
+    printf("one:%d, two:%d, three:%d, four:%d, five:%d, six:%d, seven:%d, eight:%d\n", one, two, three, four, five, six, seven, eight);
     decompression();
 }
 int readWaveHeader(FILE *ptr){
