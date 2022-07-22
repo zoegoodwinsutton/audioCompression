@@ -19,8 +19,8 @@ int* compressed_samples;
 long num_samples;
 int main(){
     FILE *outfile;
-    fp = fopen("zoe.wav", "rb");
-    outfile = fopen("new_zoe.wav", "wb");
+    fp = fopen("audio.wav", "rb");
+    outfile = fopen("new_audio.wav", "wb");
     // if(fp == NULL){
     //     printf("Error opening file\n");
     //     exit(1);
@@ -149,7 +149,6 @@ int readWaveHeader( FILE *new_fp){
         read = fread(buffer2, sizeof(buffer2), 1,fp);
     }
     
-    // read = fread(buffer4, sizeof(buffer4), 1,fp);
     // 37 - 40: data string - “data” chunk header. Marks the beginning of the data section
     read = fread(header.data_chunk_header, sizeof(header.data_chunk_header), 1, fp);
     fwrite(&header.data_chunk_header, sizeof(header.data_chunk_header), 1, new_fp);
