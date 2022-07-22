@@ -18,13 +18,20 @@ int* sample_data;
 int* compressed_samples;
 long num_samples;
 int main(int argc, char **argv){
+    if(argc < 2){
+        printf("must add CLI arg for input .wav file.\n");
+        exit(1);
+    }
     FILE *outfile;
     fp = fopen(argv[1], "rb");
-    outfile = fopen("output.wav", "wb");
     if(fp == NULL){
         printf("Error opening input file\n");
         exit(1);
     }
+    char output_filename[] = "output_";
+    strcat(output_filename, argv[1]);
+    outfile = fopen(output_filename, "wb");
+    
     readWaveHeader(outfile);
     readWaveFileSamples(fp);
 
@@ -37,9 +44,9 @@ int main(int argc, char **argv){
     // decompression();
     int j;
     printf("\n");
-    for(j = 0; j < num_samples; j++){
-        printf("%d ", sample_data[j]);
-    }
+    // for(j = 0; j < num_samples; j++){
+    //     printf("%d ", sample_data[j]);
+    // }
     printf("\nWriting WAV file\n");
     
     if(outfile == NULL){
@@ -51,7 +58,6 @@ int main(int argc, char **argv){
         buffer2[0] = sample_data[i] & 0x000000FF;
         buffer2[1] = (sample_data[i] & 0X0000FF00) >> 8;
         fwrite(buffer2,size_of_each_sample,1,outfile);
-        printf("do we get here\n");
     }
     printf("done writing to output\n");
     fclose(outfile);
@@ -140,6 +146,9 @@ int readWaveHeader( FILE *new_fp){
 
     // 37 - 40: data string - “data” chunk header. Marks the beginning of the data section
     read = fread(header.data_chunk_header, sizeof(header.data_chunk_header), 1, fp);
+    if(strcmp(header.data_chunk_header, "LIST") == 0){
+        printf("I SEE A LIST!\n");
+    }
     fwrite(&header.data_chunk_header, sizeof(header.data_chunk_header), 1, new_fp);
     printf("(37-40) Data Marker: %s \n", header.data_chunk_header);
 
