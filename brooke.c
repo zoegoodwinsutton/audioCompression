@@ -43,6 +43,7 @@ int main(){
     readWaveFileSamples(ptr);
 
     compression();
+    printf(compressed_samples[num_samples]);
     printf("\none:%d, two:%d, three:%d, four:%d, five:%d, six:%d, seven:%d, eight:%d\n", one, two, three, four, five, six, seven, eight);
     decompression();
 }
@@ -245,35 +246,35 @@ unsigned int codewordDecompression(int codeword){
     //lowkey dunno what msb and lsb are must do more research
     // if (chord == 0x7) {
     //     printf("8");
-    //     return ((lsb << 7) | (step << 8) | (1 << 12));
+    //     return ((1 << 7) | (step << 8) | (1 << 12));
     // } 
     // if (chord == 0x6) {
     //     printf("7");
-    //     return (lsb << 6) | (step << 7) | (1 << 11);
+    //     return (1 << 6) | (step << 7) | (1 << 11);
     // } 
     // if (chord == 0x5) {
     //     printf("6");
-    //     return (lsb << 5) | (step << 6) | (1 << 10);
+    //     return (1 << 5) | (step << 6) | (1 << 10);
     // } 
     // if (chord == 0x4) {
     //     printf("5");
-    //     return (lsb << 4) | (step << 5) | (1 << 9);
+    //     return (1 << 4) | (step << 5) | (1 << 9);
     // } 
     // if (chord == 0x3) {
     //     printf("4");
-    //     return (lsb << 3) | (step << 4) | (1 << 8);
+    //     return (1 << 3) | (step << 4) | (1 << 8);
     // } 
     // if (chord == 0x2) {
     //     printf("3");
-    //     return (lsb << 2) | (step << 3) | (1 << 7);
+    //     return (1 << 2) | (step << 3) | (1 << 7);
     // } 
     // if (chord == 0x1) {
     //     printf("2");
-    //     return (lsb << 1) | (step << 2) | (1 << 6);
+    //     return (1 << 1) | (step << 2) | (1 << 6);
     // } 
     // if (chord == 0x0) {
     //     printf("1");
-    //     return lsb | (step << 1) | (1 << 5);
+    //     return 1 | (step << 1) | (1 << 5);
     // } 
     return (1<<chord) | (step << (1+chord)) | (1 << (chord+5));
 }
