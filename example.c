@@ -141,6 +141,7 @@ int readWaveHeader( FILE *new_fp){
     read = fread(buffer4, sizeof(buffer4), 1,fp);
     int list_size = buffer4[0] |	(buffer4[1] << 8) |	(buffer4[2] << 16) | (buffer4[3] << 24 );
     int i;
+    printf("list size is %d\n", list_size);
     for (i = 0; i < list_size; i++){
         read = fread(buffer4, sizeof(buffer4), 1,fp);
     }
