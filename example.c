@@ -330,7 +330,7 @@ int magnitude (int sample) {
 }
 
 char codewordCompression( unsigned int sample_magnitude, int sign){
-    int chord, step;
+    char chord, step;
     char tmp;
     printf("in codeword compression");
     if (sample_magnitude & (1 << 12)){
