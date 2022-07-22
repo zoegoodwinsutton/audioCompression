@@ -144,6 +144,8 @@ int readWaveHeader( FILE *new_fp){
     printf("(37-40) Data Marker: %s \n", header.data_chunk_header);
     printf("size of buffer4: %d ", sizeof(buffer4));
     read = fread(buffer4, sizeof(buffer4), 1,fp);
+    read = fread(buffer4, sizeof(buffer4), 1,fp);
+    read = fread(buffer4, sizeof(buffer4), 1,fp);
     // 41 - 44: data size
     read = fread(buffer4, sizeof(buffer4), 1, fp);
     fwrite(&buffer4[0], sizeof(buffer4[0]), 1, new_fp);
