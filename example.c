@@ -35,13 +35,13 @@ int main(int argc, char **argv){
     readWaveHeader(outfile);
     readWaveFileSamples(fp);
 
-    // compression();
+    compression();
     int i;
     // printf("\n");
     // for(i = 0; i < num_samples; i++){
     //      printf("%d ", compressed_samples[i]);
     // }
-    // decompression();
+    decompression();
     int j;
     printf("\n");
     // for(j = 0; j < num_samples; j++){
@@ -151,10 +151,10 @@ int readWaveHeader( FILE *new_fp){
         int i;
         for(i = 0; i < 7 ; i++){
             read = fread(buffer4, sizeof(buffer4), 1, fp);
-                fwrite(&buffer4[0], sizeof(buffer4[0]), 1, new_fp);
-                fwrite(&buffer4[1], sizeof(buffer4[1]), 1, new_fp);
-                fwrite(&buffer4[2], sizeof(buffer4[2]), 1, new_fp);
-                fwrite(&buffer4[3], sizeof(buffer4[3]), 1, new_fp);
+            fwrite(&buffer4[0], sizeof(buffer4[0]), 1, new_fp);
+            fwrite(&buffer4[1], sizeof(buffer4[1]), 1, new_fp);
+            fwrite(&buffer4[2], sizeof(buffer4[2]), 1, new_fp);
+            fwrite(&buffer4[3], sizeof(buffer4[3]), 1, new_fp);
         }
         read = fread(buffer2, sizeof(buffer2), 1, fp);
         fwrite(&buffer2, sizeof(buffer2), 1, new_fp);
