@@ -3,7 +3,7 @@
 //#include <unistd.h>
 #include <stdlib.h>
 #include "wave.h"
-void readWaveFileSamples(FILE *ptr);
+void readWaveFileSamples();
 int readWaveHeader(FILE *new_fp);
 void writeWaveFileSamples();
 void compression();
@@ -26,7 +26,7 @@ int main(){
         exit(1);
     }
     readWaveHeader(outfile);
-    readWaveFileSamples(fp);
+    readWaveFileSamples();
 
     // compression();
     int i;
@@ -142,7 +142,7 @@ int readWaveHeader( FILE *new_fp){
     read = fread(header.data_chunk_header, sizeof(header.data_chunk_header), 1, fp);
     fwrite(&header.data_chunk_header, sizeof(header.data_chunk_header), 1, new_fp);
     printf("(37-40) Data Marker: %s \n", header.data_chunk_header);
-
+    read = fread(buffer4, sizeof(buffer4), 1,fp);
     // 41 - 44: data size
     read = fread(buffer4, sizeof(buffer4), 1, fp);
     fwrite(&buffer4[0], sizeof(buffer4[0]), 1, new_fp);
@@ -271,7 +271,7 @@ int readWaveHeader( FILE *new_fp){
 //     float duration_in_seconds = (float) header.overall_size / header.byterate;
 //     printf("Approx.Duration in seconds=%f\n", duration_in_seconds);
 }
-void readWaveFileSamples(FILE *ptr){
+void readWaveFileSamples(){
     if(header.format_type == 1){
         printf("Number of channels %i", header.channels);
         long size_of_each_sample = (header.channels * header.bits_per_sample) / 8;
@@ -284,7 +284,7 @@ void readWaveFileSamples(FILE *ptr){
         }
         int i;
         for(i = 0 ; i < num_samples; i++){
-            fread(buffer2, size_of_each_sample, 1, ptr);
+            fread(buffer2, size_of_each_sample, 1, fp);
             sample_data[i] = (buffer2[0]) | (buffer2[1] << 8);
         }
         for(i = 0 ; i < num_samples; i++){
