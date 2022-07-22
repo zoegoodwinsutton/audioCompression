@@ -17,22 +17,6 @@ unsigned char buffer2[2];
 int* sample_data;
 int* compressed_samples;
 long num_samples;
-int one = 0;
-int two = 0;
-int three = 0;
-int four = 0;
-int five = 0;
-int six = 0;
-int seven = 0;
-int eight = 0;
-int onea = 0;
-int twoa = 0;
-int threea = 0;
-int foura = 0;
-int fivea = 0;
-int sixa = 0;
-int sevena = 0;
-int eighta = 0;
 int main(){
     FILE *outfile;
     fp = fopen("audio.wav", "rb");
@@ -45,32 +29,31 @@ int main(){
     readWaveFileSamples();
 
     compression();
-    //int i;
+    int i;
     // printf("\n");
     // for(i = 0; i < num_samples; i++){
     //      printf("%d ", compressed_samples[i]);
     // }
-    decompression();
-    // int j;
-    // printf("\n");
+    // decompression();
+    int j;
+    printf("\n");
     // for(j = 0; j < num_samples; j++){
     //     printf("%d ", sample_data[j]);
     // }
-    // printf("\nWriting WAV file\n");
+    printf("\nWriting WAV file\n");
     
-    // if(outfile == NULL){
-    //     printf("Unable to open file.\n");
-    //     exit(1);
-    // }
-    // long size_of_each_sample = (header.channels * header.bits_per_sample) / 8;
-    // for(i =0; i < num_samples; i++){
-    //     buffer2[0] = sample_data[i] & 0x000000FF;
-    //     buffer2[1] = (sample_data[i] & 0X0000FF00) >> 8;
-    //     fwrite(buffer2,size_of_each_sample,1,outfile);
-    //     printf("do we get here\n");
-    // }
-    // printf("done writing to output\n");
-    // fclose(outfile);
+    if(outfile == NULL){
+        printf("Unable to open file.\n");
+        exit(1);
+    }
+    long size_of_each_sample = (header.channels * header.bits_per_sample) / 8;
+    for(i =0; i < num_samples; i++){
+        buffer2[0] = sample_data[i] & 0x000000FF;
+        buffer2[1] = (sample_data[i] & 0X0000FF00) >> 8;
+        fwrite(buffer2,size_of_each_sample,1,outfile);
+    }
+    printf("done writing to output\n");
+    fclose(outfile);
     // writeWaveFileSamples(outfile);
 }
 int readWaveHeader( FILE *new_fp){
@@ -154,6 +137,9 @@ int readWaveHeader( FILE *new_fp){
     header.bits_per_sample = buffer2[0] | (buffer2[1] << 8);
     printf("(35-36) Bits per sample: %u \n", header.bits_per_sample);
     read = fread(buffer4, sizeof(buffer4), 1,fp);
+    if(strcmp(buffer4, "LIST")){
+        printf("I SEE A LIST\n");
+    }
     read = fread(buffer4, sizeof(buffer4), 1,fp);
     int list_size = buffer4[0] |	(buffer4[1] << 8) |	(buffer4[2] << 16) | (buffer4[3] << 24 );
     int i;
