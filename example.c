@@ -433,7 +433,7 @@ unsigned int codewordDecompression(int codeword){
 }
 
 void compression() {
-    compressed_samples = calloc(num_samples, sizeof(char));
+    compressed_samples = calloc(num_samples, sizeof(int));
     //check for enough memory
     int i;
     printf("Starting compression...\n");
