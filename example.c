@@ -448,7 +448,7 @@ void compression() {
         // printf("magnitude %d ", sample_magnitude);
         int temp = ~codewordCompression(sample_magnitude, sign);
         printf("out of codeword");
-         compressed_samples[i] = temp
+        compressed_samples[i] = temp;
         
         // printf(" compressed %d ", compressed_samples[i]);
         
