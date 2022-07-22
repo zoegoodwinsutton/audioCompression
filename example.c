@@ -37,9 +37,9 @@ int main(){
     // decompression();
     int j;
     printf("\n");
-    for(j = 0; j < num_samples; j++){
-        printf("%d ", sample_data[j]);
-    }
+    // for(j = 0; j < num_samples; j++){
+    //     printf("%d ", sample_data[j]);
+    // }
     printf("\nWriting WAV file\n");
     
     if(outfile == NULL){
@@ -51,7 +51,6 @@ int main(){
         buffer2[0] = sample_data[i] & 0x000000FF;
         buffer2[1] = (sample_data[i] & 0X0000FF00) >> 8;
         fwrite(buffer2,size_of_each_sample,1,outfile);
-        printf("do we get here\n");
     }
     printf("done writing to output\n");
     fclose(outfile);
@@ -138,6 +137,9 @@ int readWaveHeader( FILE *new_fp){
     header.bits_per_sample = buffer2[0] | (buffer2[1] << 8);
     printf("(35-36) Bits per sample: %u \n", header.bits_per_sample);
     read = fread(buffer4, sizeof(buffer4), 1,fp);
+    if(strcmp(buffer4, "LIST")){
+        print("I SEE A LIST\n");
+    }
     read = fread(buffer4, sizeof(buffer4), 1,fp);
     int list_size = buffer4[0] |	(buffer4[1] << 8) |	(buffer4[2] << 16) | (buffer4[3] << 24 );
     int i;
