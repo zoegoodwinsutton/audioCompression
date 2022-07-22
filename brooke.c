@@ -43,7 +43,7 @@ int main(){
     readWaveFileSamples(ptr);
 
     compression();
-    printf(compressed_samples[num_samples]);
+    printf("\n%d", compressed_samples[num_samples]);
     printf("\none:%d, two:%d, three:%d, four:%d, five:%d, six:%d, seven:%d, eight:%d\n", one, two, three, four, five, six, seven, eight);
     decompression();
 }
