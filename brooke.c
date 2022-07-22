@@ -18,14 +18,13 @@ int* sample_data;
 int* compressed_samples;
 long num_samples;
 int main(){
-    FILE *outfile;
     fp = fopen("audio.wav", "rb");
     //outfile = fopen("output.wav", "wb");
     // if(fp == NULL){
     //     printf("Error opening file\n");
     //     exit(1);
     // }
-    readWaveHeader(outfile);
+    readWaveHeader(fp);
     readWaveFileSamples();
 
     compression();
