@@ -20,7 +20,7 @@ long num_samples;
 int main(){
     ptr = fopen("audio.wav", "rb");
     if(ptr == NULL){
-        printf("Error opening file\n");
+        perror("Error opening file\n");
         exit(1);
     }
     readWaveHeader(ptr);
