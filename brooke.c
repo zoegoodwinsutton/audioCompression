@@ -28,32 +28,32 @@ int main(){
     readWaveHeader(outfile);
     readWaveFileSamples();
 
-    //compression();
-    int i;
+    compression();
+    // int i;
+    // // printf("\n");
+    // // for(i = 0; i < num_samples; i++){
+    // //      printf("%d ", compressed_samples[i]);
+    // // }
+    decompression();
+    // int j;
     // printf("\n");
-    // for(i = 0; i < num_samples; i++){
-    //      printf("%d ", compressed_samples[i]);
-    // }
-    // decompression();
-    int j;
-    printf("\n");
-    // for(j = 0; j < num_samples; j++){
-    //     printf("%d ", sample_data[j]);
-    // }
-    printf("\nWriting WAV file\n");
+    // // for(j = 0; j < num_samples; j++){
+    // //     printf("%d ", sample_data[j]);
+    // // }
+    // printf("\nWriting WAV file\n");
     
-    if(outfile == NULL){
-        printf("Unable to open file.\n");
-        exit(1);
-    }
-    long size_of_each_sample = (header.channels * header.bits_per_sample) / 8;
-    for(i =0; i < num_samples; i++){
-        buffer2[0] = sample_data[i] & 0x000000FF;
-        buffer2[1] = (sample_data[i] & 0X0000FF00) >> 8;
-        fwrite(buffer2,size_of_each_sample,1,outfile);
-    }
-    printf("done writing to output\n");
-    fclose(outfile);
+    // if(outfile == NULL){
+    //     printf("Unable to open file.\n");
+    //     exit(1);
+    // }
+    // long size_of_each_sample = (header.channels * header.bits_per_sample) / 8;
+    // for(i =0; i < num_samples; i++){
+    //     buffer2[0] = sample_data[i] & 0x000000FF;
+    //     buffer2[1] = (sample_data[i] & 0X0000FF00) >> 8;
+    //     fwrite(buffer2,size_of_each_sample,1,outfile);
+    // }
+    // printf("done writing to output\n");
+    // fclose(outfile);
     // writeWaveFileSamples(outfile);
 }
 int readWaveHeader( FILE *new_fp){
