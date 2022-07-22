@@ -28,7 +28,7 @@ int main(){
     readWaveHeader(outfile);
     readWaveFileSamples();
 
-    compression();
+    //compression();
     int i;
     // printf("\n");
     // for(i = 0; i < num_samples; i++){
