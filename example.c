@@ -137,15 +137,14 @@ int readWaveHeader( FILE *new_fp){
     fwrite(&buffer2, sizeof(buffer2), 1, new_fp);
     header.bits_per_sample = buffer2[0] | (buffer2[1] << 8);
     printf("(35-36) Bits per sample: %u \n", header.bits_per_sample);
-
+    read = fread(buffer4, sizeof(buffer4), 1,fp);
+    read = fread(buffer4, sizeof(buffer4), 1,fp);
+    read = fread(buffer4, sizeof(buffer4), 1,fp);
     // 37 - 40: data string - “data” chunk header. Marks the beginning of the data section
     read = fread(header.data_chunk_header, sizeof(header.data_chunk_header), 1, fp);
     fwrite(&header.data_chunk_header, sizeof(header.data_chunk_header), 1, new_fp);
     printf("(37-40) Data Marker: %s \n", header.data_chunk_header);
     printf("size of buffer4: %d ", sizeof(buffer4));
-    read = fread(buffer4, sizeof(buffer4), 1,fp);
-    read = fread(buffer4, sizeof(buffer4), 1,fp);
-    read = fread(buffer4, sizeof(buffer4), 1,fp);
     // 41 - 44: data size
     read = fread(buffer4, sizeof(buffer4), 1, fp);
     fwrite(&buffer4[0], sizeof(buffer4[0]), 1, new_fp);
