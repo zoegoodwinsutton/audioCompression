@@ -41,7 +41,7 @@ int main(int argc, char **argv){
     // for(i = 0; i < num_samples; i++){
     //      printf("%d ", compressed_samples[i]);
     // }
-    decompression();
+    //decompression();
     int j;
     printf("\n");
     // for(j = 0; j < num_samples; j++){
@@ -439,13 +439,14 @@ void compression() {
     printf("Starting compression...\n");
     for(i = 0; i < num_samples; i ++){
         // printf("\n sample before %d, %d ", sample_data[i], i);
-        int sample = (sample_data[i] >> 2);
+        printf("%d ", sample_data[i]);
+        // int sample = (sample_data[i] >> 2);
         // printf("sample after %d ", sample);
-        int sign = signum(sample);
+        // int sign = signum(sample);
         // printf("sign %d ", sign);
-        unsigned int sample_magnitude = magnitude(sample) + 33; //from slides??
+        // unsigned int sample_magnitude = magnitude(sample) + 33; //from slides??
         // printf("magnitude %d ", sample_magnitude);
-        compressed_samples[i] = ~codewordCompression(sample_magnitude, sign);
+        // compressed_samples[i] = ~codewordCompression(sample_magnitude, sign);
         // printf(" compressed %d ", compressed_samples[i]);
         
     }
