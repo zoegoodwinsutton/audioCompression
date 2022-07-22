@@ -18,12 +18,12 @@ int* sample_data;
 int* compressed_samples;
 long num_samples;
 int main(int argc, char **argv){
-    // if (argc < 2) {
-    //     printf("\n Please input a valid .wav file \n");
-    //     exit(1);
-    // }
+    if (argc < 2) {
+        printf("\n Please input a valid .wav file \n");
+        exit(1);
+    }
     FILE *outfile;
-    fp = fopen("zoe.wav", "rb");
+    fp = fopen(argv[1], "rb");
     outfile = fopen("new_audio.wav", "wb");
     // if(fp == NULL){
     //     printf("Error opening file\n");
