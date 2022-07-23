@@ -220,16 +220,16 @@ void readWaveFileSamples(FILE *ptr){
 }
 
 int signum( int sample) {
-    if (sample < 0) return 0;
-    else return 1;
-    //return sample < 0 ? 0 : 1;
-    //return ((~sample >> 31) & 0x1);
+    // if (sample < 0) return 0;
+    // else return 1;
+    // return sample < 0 ? 0 : 1;
+    return ((~sample >> 31) & 0x1);
 }
 
 int magnitude (int sample) {
-    if (sample < 0) return -sample;
-    else return sample;
-    //return sample < 0 ? -sample : sample;
+    // if (sample < 0) return -sample;
+    // else return sample;
+    return sample < 0 ? -sample : sample;
 
     //if(sample < 0) sample = -sample
     //return sample
@@ -255,8 +255,8 @@ char codewordCompression( unsigned int sample_magnitude, int sign){
     //for loop to calculate leading 0s then 
 
         
-        chord = exp_lut[(sample_magnitude >> 4) & 0xFF]; //not 100% sure on this would have to check if chords are matching
-        step = (sample_magnitude >> (chord+1)) & 0xF;
+        // chord = exp_lut[(sample_magnitude >> 4) & 0xFF]; //not 100% sure on this would have to check if chords are matching
+        // step = (sample_magnitude >> (chord+1)) & 0xF;
         //https://www.dsprelated.com/showthread/comp.dsp/51552-1.php
     // if (sample_magnitude & (1 << 5)){
     //     chord = 0x0;
@@ -306,18 +306,40 @@ char codewordCompression( unsigned int sample_magnitude, int sign){
     //     ccw = (sign << 7) | (chord << 4) | step;
     //     return ccw;
     // }
-    
+
+    // OPTIMIZATION 4
+
+    if (sample_magnitude & (1 << 5)){
+        chord = 0x0;
+    }else if (sample_magnitude & (1 << 12)){
+        chord = 0x7;
+    }else if (sample_magnitude & (1 << 11)){
+        chord = 0x6;
+    }else if (sample_magnitude & (1 << 10)){
+        chord = 0x5;
+    }else if (sample_magnitude & (1 << 9)){
+        chord = 0x4;
+    }else if (sample_magnitude & (1 << 8)){
+        chord = 0x3;
+    }else if(sample_magnitude & (1 << 7)){
+        chord = 0x2;
+    }else if (sample_magnitude & (1 << 6)){
+        chord = 0x1;
+    }
+    step = (sample_magnitude >> 2) & 0xF;
+    ccw = (sign << 7) | (chord << 4) | step;
+    return ccw;
 
     //rempove ccw and return and put here
     // step = (sample_magnitude >> (chord + 1)) & 0xF;
-    ccw = ((sign << 7) | (chord << 4) | step);
-    return ccw;
+    // ccw = ((sign << 7) | (chord << 4) | step);
+    // return ccw;
 }
 
 unsigned int codewordDecompression(int codeword){
     int chord = (codeword & 0x70) >> 4;
     int step = (codeword & 0x0F);
-    return decompressionlut[chord] | (step << 8);
+    // return decompressionlut[chord] | (step << 8);
 
     // if (chord == 0x7) {
     //     return ((1 << 7) | (step << 8) | (1 << 12));
@@ -343,7 +365,7 @@ unsigned int codewordDecompression(int codeword){
     // if (chord == 0x0) {
     //     return 1 | (step << 1) | (1 << 5);
     // } 
-    //return (1<<chord) | (step << (1+chord)) | (1 << (chord+5));
+    return (1<<chord) | (step << (1+chord)) | (1 << (chord+5));
 
     //switch to assignment rather than retirn values
     // switch(chord){
