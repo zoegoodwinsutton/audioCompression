@@ -41,7 +41,7 @@ int main(int argc, char **argv){
     // for(i = 0; i < num_samples; i++){
     //      printf("%d ", compressed_samples[i]);
     // }
-    //decompression();
+    decompression();
     int j;
     printf("\n");
     // for(j = 0; j < num_samples; j++){
