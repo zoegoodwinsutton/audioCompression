@@ -6,6 +6,8 @@
 #include <time.h>
 void readWaveFileSamples(FILE *ptr);
 int readWaveHeader(FILE *new_fp);
+unsigned int codewordDecompression(int codeword);
+char codewordCompression( unsigned int sample_magnitude, int sign);
 void writeWaveFileSamples();
 void compression();
 void decompression();
@@ -59,7 +61,7 @@ int main(int argc, char **argv){
     // OPTIMIZATION 5
     start = clock();
     compressed_samples = calloc(num_samples, sizeof(int));
-    int i;
+    // int i;
     for(i = 0; i < num_samples; i ++){
         int sample = (sample_data[i] >> 2);
         int sign = ((~sample >> 31) & 0x1); //put the lo
@@ -80,7 +82,7 @@ int main(int argc, char **argv){
     // decompression();
     // OPTIMIZATION 5
     start = clock();
-    int i;
+    // int i;
     for(i = 0; i < num_samples; i ++){
         int sample = ~(compressed_samples[i]);
         int sign = (sample & 0x80) >> 7;
