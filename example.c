@@ -325,8 +325,7 @@ int signum( int sample) {
 }
 
 int magnitude (int sample) {
-    if (sample < 0) ~sample;
-    else return sample;
+    return sample > 0 ? -sample : sample;
 }
 
 char codewordCompression( unsigned int sample_magnitude, int sign){
