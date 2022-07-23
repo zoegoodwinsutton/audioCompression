@@ -191,6 +191,7 @@ void readWaveFileSamples(FILE *ptr){
         }
         int i;
         for(i = 0 ; i < num_samples; i++){
+            printf("Reading %d/ %d \n", i, num_samples);
             fread(buffer2, size_of_each_sample, 1, ptr);
             sample_data[i] = (buffer2[0]) | (buffer2[1] << 8);
         }
