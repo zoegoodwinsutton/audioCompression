@@ -74,7 +74,7 @@ int main(int argc, char **argv){
     // printf("Audio Compression using Mu Law: %f seconds \n", (double) (stop - start) / CLOCKS_PER_SEC);
     // printf("Audio Compression using Mu Law: %d clock cycles \n\n",  (stop - start));
 
-    // int i;
+    int i;
     // printf("\n");
     // for(i = 0; i < num_samples; i++){
     //      printf("%d ", compressed_samples[i]);
