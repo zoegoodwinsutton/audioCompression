@@ -178,6 +178,7 @@ int readWaveHeader( FILE *new_fp){
     printf("COMPLETED Reading Wave File Headers \n\n");
 }
 void readWaveFileSamples(FILE *ptr){
+    printf("Starting reading WAV file samples\n");
     if(header.format_type == 1){
         printf("Number of channels %i", header.channels);
         long size_of_each_sample = (header.channels * header.bits_per_sample) / 8;
@@ -197,6 +198,7 @@ void readWaveFileSamples(FILE *ptr){
         printf("Can only read PCM.");
         exit(1);
     }
+    printf("Finished reading WAV file samples\n");
 }
 
 int signum( int sample) {
