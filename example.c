@@ -331,7 +331,6 @@ int magnitude (int sample) {
 char codewordCompression( unsigned int sample_magnitude, int sign){
     char chord, step;
     char tmp;
-    printf("in codeword compression");
     if (sample_magnitude & (1 << 12)){
         // printf("1");
         chord = 0x7;
@@ -432,10 +431,10 @@ unsigned int codewordDecompression(int codeword){
 }
 
 void compression() {
-    compressed_samples = calloc(num_samples, sizeof(char));
+    compressed_samples = calloc(num_samples, sizeof(int));
     //check for enough memory
     int i;
-    printf("Starting compression...\n");
+    //printf("Starting compression...\n");
     for(i = 0; i < num_samples; i ++){
         // printf("\n sample before %d, %d ", sample_data[i], i);
         printf("%d ", sample_data[i]);
@@ -446,18 +445,18 @@ void compression() {
         unsigned int sample_magnitude = magnitude(sample) + 33; //from slides??
         // printf("magnitude %d ", sample_magnitude);
         int temp = ~codewordCompression(sample_magnitude, sign);
-        printf("out of codeword");
+        //printf("out of codeword");
         compressed_samples[i] = temp;
         
         // printf(" compressed %d ", compressed_samples[i]);
         
     }
-    printf("Finished compression!\n");
+    //printf("Finished compression!\n");
 }
 
 void decompression() {
     int i;
-    printf("Starting decompression...\n");
+    //printf("Starting decompression...\n");
     for(i = 0; i < num_samples; i ++){
         // printf("\n sample before %d, %d ", compressed_samples[i], i);
         int sample = ~(compressed_samples[i]);
@@ -472,5 +471,5 @@ void decompression() {
         // printf("sample shift %d ", (sample<<2));
         sample_data[i] = sample << 2;
     }
-    printf("Finished decompression!\n");
+    //printf("Finished decompression!\n");
 }
