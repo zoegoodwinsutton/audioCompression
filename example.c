@@ -326,7 +326,7 @@ char codewordCompression( unsigned int sample_magnitude, int sign){
     }else if (sample_magnitude & (1 << 6)){
         chord = 0x1;
     }
-    step = (sample_magnitude >> 2) & 0xF;
+    step = (sample_magnitude >> (chord + 1)) & 0xF;
     ccw = (sign << 7) | (chord << 4) | step;
     return ccw;
 
