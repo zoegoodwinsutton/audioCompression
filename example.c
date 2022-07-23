@@ -256,7 +256,12 @@ char codewordCompression( unsigned int sample_magnitude, int sign){
         //chord = exp_lut[(sample_magnitude >> 4) & 0xFF]; //not 100% sure on this would have to check if chords are matching
         //step = (sample_magnitude >> (chord+1)) & 0xF;
         //https://www.dsprelated.com/showthread/comp.dsp/51552-1.php
-
+    if (sample_magnitude & (1 << 5)){
+        chord = 0x0;
+        step = (sample_magnitude >> 1) & 0xF;
+        ccw = ((sign << 7) | (chord << 4) | step);
+        return ccw;
+    }
     if (sample_magnitude & (1 << 12)){
         chord = 0x7;
         step = (sample_magnitude >> 8) & 0xF;
@@ -299,12 +304,7 @@ char codewordCompression( unsigned int sample_magnitude, int sign){
         ccw = (sign << 7) | (chord << 4) | step;
         return ccw;
     }
-    if (sample_magnitude & (1 << 5)){
-        chord = 0x0;
-        step = (sample_magnitude >> 1) & 0xF;
-        ccw = ((sign << 7) | (chord << 4) | step);
-        return ccw;
-    }
+    
 
     //rempove ccw and return and put here
     // step = (sample_magnitude >> (chord + 1)) & 0xF;
@@ -318,51 +318,51 @@ unsigned int codewordDecompression(int codeword){
     //return lut[chord] | (step << 8)
     //unsigned int* decompressionlut[0] = [33, 66, 132, 264, 528, 1056, 2212, 4224];
 
-    if (chord == 0x7) {
-        return ((1 << 7) | (step << 8) | (1 << 12));
-    } 
-    if (chord == 0x6) {
-        return (1 << 6) | (step << 7) | (1 << 11);
-    } 
-    if (chord == 0x5) {
-        return (1 << 5) | (step << 6) | (1 << 10);
-    } 
-    if (chord == 0x4) {
-        return (1 << 4) | (step << 5) | (1 << 9);
-    } 
-    if (chord == 0x3) {
-        return (1 << 3) | (step << 4) | (1 << 8);
-    } 
-    if (chord == 0x2) {
-        return (1 << 2) | (step << 3) | (1 << 7);
-    } 
-    if (chord == 0x1) {
-        return (1 << 1) | (step << 2) | (1 << 6);
-    } 
-    if (chord == 0x0) {
-        return 1 | (step << 1) | (1 << 5);
-    } 
+    // if (chord == 0x7) {
+    //     return ((1 << 7) | (step << 8) | (1 << 12));
+    // } 
+    // if (chord == 0x6) {
+    //     return (1 << 6) | (step << 7) | (1 << 11);
+    // } 
+    // if (chord == 0x5) {
+    //     return (1 << 5) | (step << 6) | (1 << 10);
+    // } 
+    // if (chord == 0x4) {
+    //     return (1 << 4) | (step << 5) | (1 << 9);
+    // } 
+    // if (chord == 0x3) {
+    //     return (1 << 3) | (step << 4) | (1 << 8);
+    // } 
+    // if (chord == 0x2) {
+    //     return (1 << 2) | (step << 3) | (1 << 7);
+    // } 
+    // if (chord == 0x1) {
+    //     return (1 << 1) | (step << 2) | (1 << 6);
+    // } 
+    // if (chord == 0x0) {
+    //     return 1 | (step << 1) | (1 << 5);
+    // } 
     //return (1<<chord) | (step << (1+chord)) | (1 << (chord+5));
 
     //switch to assignment rather than retirn values
-    // switch(chord){
-    //     case 0x7:
-    //         return ((1 << 7) | (step << 8) | (1 << 12));
-    //     case 0x6:
-    //         return (1 << 6) | (step << 7) | (1 << 11);
-    //     case 0x5:
-    //         return (1 << 5) | (step << 6) | (1 << 10);
-    //     case 0x4:
-    //         return (1 << 4) | (step << 5) | (1 << 9);
-    //     case 0x3:
-    //         return (1 << 3) | (step << 4) | (1 << 8);
-    //     case 0x2:
-    //         return (1 << 2) | (step << 3) | (1 << 7);
-    //     case 0x1:
-    //         return (1 << 1) | (step << 2) | (1 << 6);
-    //     case 0x0:
-    //         return 1 | (step << 1) | (1 << 5);
-    // } 
+    switch(chord){
+        case 0x7:
+            return ((1 << 7) | (step << 8) | (1 << 12));
+        case 0x6:
+            return (1 << 6) | (step << 7) | (1 << 11);
+        case 0x5:
+            return (1 << 5) | (step << 6) | (1 << 10);
+        case 0x4:
+            return (1 << 4) | (step << 5) | (1 << 9);
+        case 0x3:
+            return (1 << 3) | (step << 4) | (1 << 8);
+        case 0x2:
+            return (1 << 2) | (step << 3) | (1 << 7);
+        case 0x1:
+            return (1 << 1) | (step << 2) | (1 << 6);
+        case 0x0:
+            return 1 | (step << 1) | (1 << 5);
+    } 
 }
 
 void compression() {
