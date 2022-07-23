@@ -19,6 +19,24 @@ unsigned char buffer2[2];
 int* sample_data;
 int* compressed_samples;
 long num_samples;
+static int exp_lut[256] = {0,0,1,1,2,2,2,2,3,3,3,3,3,3,3,3,
+                               4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,
+                               5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
+                               5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
+                               6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
+                               6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
+                               6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
+                               6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
+                               7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+                               7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+                               7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+                               7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+                               7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+                               7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+                               7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+                               7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7};
+static unsigned int decompressionlut[8] = {33, 66, 132, 264, 528, 1056, 2212, 4224};
+        
 int main(int argc, char **argv){
     if(argc < 2){
         printf("must add CLI arg for input .wav file.\n");
@@ -236,87 +254,70 @@ char codewordCompression( unsigned int sample_magnitude, int sign){
 
     //for loop to calculate leading 0s then 
 
-        // static int exp_lut[256] = {0,0,1,1,2,2,2,2,3,3,3,3,3,3,3,3,
-        //                        4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,
-        //                        5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
-        //                        5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
-        //                        6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
-        //                        6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
-        //                        6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
-        //                        6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
-        //                        7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
-        //                        7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
-        //                        7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
-        //                        7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
-        //                        7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
-        //                        7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
-        //                        7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
-        //                        7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7};
-        //
-        //chord = exp_lut[(sample_magnitude >> 4) & 0xFF]; //not 100% sure on this would have to check if chords are matching
-        //step = (sample_magnitude >> (chord+1)) & 0xF;
+        
+        chord = exp_lut[(sample_magnitude >> 4) & 0xFF]; //not 100% sure on this would have to check if chords are matching
+        step = (sample_magnitude >> (chord+1)) & 0xF;
         //https://www.dsprelated.com/showthread/comp.dsp/51552-1.php
-    if (sample_magnitude & (1 << 5)){
-        chord = 0x0;
-        step = (sample_magnitude >> 1) & 0xF;
-        ccw = ((sign << 7) | (chord << 4) | step);
-        return ccw;
-    }
-    if (sample_magnitude & (1 << 12)){
-        chord = 0x7;
-        step = (sample_magnitude >> 8) & 0xF;
-        ccw = (sign << 7) | (chord << 4) | step;
-        return ccw;
-    } 
-    if (sample_magnitude & (1 << 11)){
-        chord = 0x6;
-        step = (sample_magnitude >> 7) & 0xF;
-        ccw = (sign << 7) | (chord << 4) | step;
-        return ccw;
-    }
-    if (sample_magnitude & (1 << 10)){
-        chord = 0x5;
-        step = (sample_magnitude >> 6) & 0xF;
-        ccw = (sign << 7) | (chord << 4) | step;
-        return ccw;
-    }
-    if (sample_magnitude & (1 << 9)){
-        chord = 0x4;
-        step = (sample_magnitude >> 5) & 0xF;
-        ccw = (sign << 7) | (chord << 4) | step;
-        return ccw;
-    }
-    if (sample_magnitude & (1 << 8)){
-        chord = 0x3;
-        step = (sample_magnitude >> 4) & 0xF;
-        ccw = (sign << 7) | (chord << 4) | step;
-        return ccw;
-    }
-    if (sample_magnitude & (1 << 7)){
-        chord = 0x2;
-        step = (sample_magnitude >> 3) & 0xF;
-        ccw = (sign << 7) | (chord << 4) | step;
-        return ccw;
-    }
-    if (sample_magnitude & (1 << 6)){
-        chord = 0x1;
-        step = (sample_magnitude >> 2) & 0xF;
-        ccw = (sign << 7) | (chord << 4) | step;
-        return ccw;
-    }
+    // if (sample_magnitude & (1 << 5)){
+    //     chord = 0x0;
+    //     step = (sample_magnitude >> 1) & 0xF;
+    //     ccw = ((sign << 7) | (chord << 4) | step);
+    //     return ccw;
+    // }
+    // if (sample_magnitude & (1 << 12)){
+    //     chord = 0x7;
+    //     step = (sample_magnitude >> 8) & 0xF;
+    //     ccw = (sign << 7) | (chord << 4) | step;
+    //     return ccw;
+    // } 
+    // if (sample_magnitude & (1 << 11)){
+    //     chord = 0x6;
+    //     step = (sample_magnitude >> 7) & 0xF;
+    //     ccw = (sign << 7) | (chord << 4) | step;
+    //     return ccw;
+    // }
+    // if (sample_magnitude & (1 << 10)){
+    //     chord = 0x5;
+    //     step = (sample_magnitude >> 6) & 0xF;
+    //     ccw = (sign << 7) | (chord << 4) | step;
+    //     return ccw;
+    // }
+    // if (sample_magnitude & (1 << 9)){
+    //     chord = 0x4;
+    //     step = (sample_magnitude >> 5) & 0xF;
+    //     ccw = (sign << 7) | (chord << 4) | step;
+    //     return ccw;
+    // }
+    // if (sample_magnitude & (1 << 8)){
+    //     chord = 0x3;
+    //     step = (sample_magnitude >> 4) & 0xF;
+    //     ccw = (sign << 7) | (chord << 4) | step;
+    //     return ccw;
+    // }
+    // if (sample_magnitude & (1 << 7)){
+    //     chord = 0x2;
+    //     step = (sample_magnitude >> 3) & 0xF;
+    //     ccw = (sign << 7) | (chord << 4) | step;
+    //     return ccw;
+    // }
+    // if (sample_magnitude & (1 << 6)){
+    //     chord = 0x1;
+    //     step = (sample_magnitude >> 2) & 0xF;
+    //     ccw = (sign << 7) | (chord << 4) | step;
+    //     return ccw;
+    // }
     
 
     //rempove ccw and return and put here
     // step = (sample_magnitude >> (chord + 1)) & 0xF;
-    // ccw = ((sign << 7) | (chord << 4) | step);
-    // return ccw;
+    ccw = ((sign << 7) | (chord << 4) | step);
+    return ccw;
 }
 
 unsigned int codewordDecompression(int codeword){
     int chord = (codeword & 0x70) >> 4;
     int step = (codeword & 0x0F);
-    //return lut[chord] | (step << 8)
-    //unsigned int* decompressionlut[0] = [33, 66, 132, 264, 528, 1056, 2212, 4224];
+    return decompressionlut[chord] | (step << 8)
 
     // if (chord == 0x7) {
     //     return ((1 << 7) | (step << 8) | (1 << 12));
@@ -345,24 +346,24 @@ unsigned int codewordDecompression(int codeword){
     //return (1<<chord) | (step << (1+chord)) | (1 << (chord+5));
 
     //switch to assignment rather than retirn values
-    switch(chord){
-        case 0x7:
-            return ((1 << 7) | (step << 8) | (1 << 12));
-        case 0x6:
-            return (1 << 6) | (step << 7) | (1 << 11);
-        case 0x5:
-            return (1 << 5) | (step << 6) | (1 << 10);
-        case 0x4:
-            return (1 << 4) | (step << 5) | (1 << 9);
-        case 0x3:
-            return (1 << 3) | (step << 4) | (1 << 8);
-        case 0x2:
-            return (1 << 2) | (step << 3) | (1 << 7);
-        case 0x1:
-            return (1 << 1) | (step << 2) | (1 << 6);
-        case 0x0:
-            return 1 | (step << 1) | (1 << 5);
-    } 
+    // switch(chord){
+    //     case 0x7:
+    //         return ((1 << 7) | (step << 8) | (1 << 12));
+    //     case 0x6:
+    //         return (1 << 6) | (step << 7) | (1 << 11);
+    //     case 0x5:
+    //         return (1 << 5) | (step << 6) | (1 << 10);
+    //     case 0x4:
+    //         return (1 << 4) | (step << 5) | (1 << 9);
+    //     case 0x3:
+    //         return (1 << 3) | (step << 4) | (1 << 8);
+    //     case 0x2:
+    //         return (1 << 2) | (step << 3) | (1 << 7);
+    //     case 0x1:
+    //         return (1 << 1) | (step << 2) | (1 << 6);
+    //     case 0x0:
+    //         return 1 | (step << 1) | (1 << 5);
+    // } 
 }
 
 void compression() {
