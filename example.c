@@ -55,13 +55,44 @@ int main(int argc, char **argv){
     readWaveHeader(outfile);
     readWaveFileSamples(fp);
 
-    compression();
+    // compression();
+    // OPTIMIZATION 5
+    start = clock();
+    compressed_samples = calloc(num_samples, sizeof(int));
+    int i;
+    for(i = 0; i < num_samples; i ++){
+        int sample = (sample_data[i] >> 2);
+        int sign = ((~sample >> 31) & 0x1); //put the lo
+        unsigned int sample_magnitude = sample < 0 ? -sample : sample; //put the logic here instead of function call
+        sample_magnitude = sample_magnitude+33;
+        int temp = ~codewordCompression(sample_magnitude, sign);
+        compressed_samples[i] = temp;   
+    }
+    stop = clock();
+    printf("Audio Compression using Mu Law: %f seconds \n", (double) (stop - start) / CLOCKS_PER_SEC);
+    printf("Audio Compression using Mu Law: %d clock cycles \n\n",  (stop - start));
+
     int i;
     // printf("\n");
     // for(i = 0; i < num_samples; i++){
     //      printf("%d ", compressed_samples[i]);
     // }
-    decompression();
+    // decompression();
+    // OPTIMIZATION 5
+    start = clock();
+    int i;
+    for(i = 0; i < num_samples; i ++){
+        int sample = ~(compressed_samples[i]);
+        int sign = (sample & 0x80) >> 7;
+        unsigned int sample_magnitude = (codewordDecompression(sample) - 33); 
+        if(sign == 1) sample = sample_magnitude;
+        else sample = -sample_magnitude;
+        sample_data[i] = sample << 2;
+    }
+    stop = clock();
+    printf("Audio Decompression using Mu Law: %f seconds\ns", (double) (stop - start) / CLOCKS_PER_SEC);
+    printf("Audio Decompression using Mu Law: %d clock cycles\n\n", (stop - start));
+
     int j;
     printf("\n");
     // for(j = 0; j < num_samples; j++){
@@ -258,77 +289,77 @@ char codewordCompression( unsigned int sample_magnitude, int sign){
         // chord = exp_lut[(sample_magnitude >> 4) & 0xFF]; //not 100% sure on this would have to check if chords are matching
         // step = (sample_magnitude >> (chord+1)) & 0xF;
         //https://www.dsprelated.com/showthread/comp.dsp/51552-1.php
-    // if (sample_magnitude & (1 << 5)){
-    //     chord = 0x0;
-    //     step = (sample_magnitude >> 1) & 0xF;
-    //     ccw = ((sign << 7) | (chord << 4) | step);
-    //     return ccw;
-    // }
-    // if (sample_magnitude & (1 << 12)){
-    //     chord = 0x7;
-    //     step = (sample_magnitude >> 8) & 0xF;
-    //     ccw = (sign << 7) | (chord << 4) | step;
-    //     return ccw;
-    // } 
-    // if (sample_magnitude & (1 << 11)){
-    //     chord = 0x6;
-    //     step = (sample_magnitude >> 7) & 0xF;
-    //     ccw = (sign << 7) | (chord << 4) | step;
-    //     return ccw;
-    // }
-    // if (sample_magnitude & (1 << 10)){
-    //     chord = 0x5;
-    //     step = (sample_magnitude >> 6) & 0xF;
-    //     ccw = (sign << 7) | (chord << 4) | step;
-    //     return ccw;
-    // }
-    // if (sample_magnitude & (1 << 9)){
-    //     chord = 0x4;
-    //     step = (sample_magnitude >> 5) & 0xF;
-    //     ccw = (sign << 7) | (chord << 4) | step;
-    //     return ccw;
-    // }
-    // if (sample_magnitude & (1 << 8)){
-    //     chord = 0x3;
-    //     step = (sample_magnitude >> 4) & 0xF;
-    //     ccw = (sign << 7) | (chord << 4) | step;
-    //     return ccw;
-    // }
-    // if (sample_magnitude & (1 << 7)){
-    //     chord = 0x2;
-    //     step = (sample_magnitude >> 3) & 0xF;
-    //     ccw = (sign << 7) | (chord << 4) | step;
-    //     return ccw;
-    // }
-    // if (sample_magnitude & (1 << 6)){
-    //     chord = 0x1;
-    //     step = (sample_magnitude >> 2) & 0xF;
-    //     ccw = (sign << 7) | (chord << 4) | step;
-    //     return ccw;
-    // }
+    if (sample_magnitude & (1 << 5)){
+        chord = 0x0;
+        step = (sample_magnitude >> 1) & 0xF;
+        ccw = ((sign << 7) | (chord << 4) | step);
+        return ccw;
+    }
+    if (sample_magnitude & (1 << 12)){
+        chord = 0x7;
+        step = (sample_magnitude >> 8) & 0xF;
+        ccw = (sign << 7) | (chord << 4) | step;
+        return ccw;
+    } 
+    if (sample_magnitude & (1 << 11)){
+        chord = 0x6;
+        step = (sample_magnitude >> 7) & 0xF;
+        ccw = (sign << 7) | (chord << 4) | step;
+        return ccw;
+    }
+    if (sample_magnitude & (1 << 10)){
+        chord = 0x5;
+        step = (sample_magnitude >> 6) & 0xF;
+        ccw = (sign << 7) | (chord << 4) | step;
+        return ccw;
+    }
+    if (sample_magnitude & (1 << 9)){
+        chord = 0x4;
+        step = (sample_magnitude >> 5) & 0xF;
+        ccw = (sign << 7) | (chord << 4) | step;
+        return ccw;
+    }
+    if (sample_magnitude & (1 << 8)){
+        chord = 0x3;
+        step = (sample_magnitude >> 4) & 0xF;
+        ccw = (sign << 7) | (chord << 4) | step;
+        return ccw;
+    }
+    if (sample_magnitude & (1 << 7)){
+        chord = 0x2;
+        step = (sample_magnitude >> 3) & 0xF;
+        ccw = (sign << 7) | (chord << 4) | step;
+        return ccw;
+    }
+    if (sample_magnitude & (1 << 6)){
+        chord = 0x1;
+        step = (sample_magnitude >> 2) & 0xF;
+        ccw = (sign << 7) | (chord << 4) | step;
+        return ccw;
+    }
 
     // OPTIMIZATION 4
 
-    if (sample_magnitude & (1 << 5)){
-        chord = 0x0;
-    }else if (sample_magnitude & (1 << 12)){
-        chord = 0x7;
-    }else if (sample_magnitude & (1 << 11)){
-        chord = 0x6;
-    }else if (sample_magnitude & (1 << 10)){
-        chord = 0x5;
-    }else if (sample_magnitude & (1 << 9)){
-        chord = 0x4;
-    }else if (sample_magnitude & (1 << 8)){
-        chord = 0x3;
-    }else if(sample_magnitude & (1 << 7)){
-        chord = 0x2;
-    }else if (sample_magnitude & (1 << 6)){
-        chord = 0x1;
-    }
-    step = (sample_magnitude >> (chord + 1)) & 0xF;
-    ccw = (sign << 7) | (chord << 4) | step;
-    return ccw;
+    // if (sample_magnitude & (1 << 5)){
+    //     chord = 0x0;
+    // }else if (sample_magnitude & (1 << 12)){
+    //     chord = 0x7;
+    // }else if (sample_magnitude & (1 << 11)){
+    //     chord = 0x6;
+    // }else if (sample_magnitude & (1 << 10)){
+    //     chord = 0x5;
+    // }else if (sample_magnitude & (1 << 9)){
+    //     chord = 0x4;
+    // }else if (sample_magnitude & (1 << 8)){
+    //     chord = 0x3;
+    // }else if(sample_magnitude & (1 << 7)){
+    //     chord = 0x2;
+    // }else if (sample_magnitude & (1 << 6)){
+    //     chord = 0x1;
+    // }
+    // step = (sample_magnitude >> (chord + 1)) & 0xF;
+    // ccw = (sign << 7) | (chord << 4) | step;
+    // return ccw;
 
     //rempove ccw and return and put here
     // step = (sample_magnitude >> (chord + 1)) & 0xF;
@@ -341,31 +372,31 @@ unsigned int codewordDecompression(int codeword){
     int step = (codeword & 0x0F);
     // return decompressionlut[chord] | (step << 8);
 
-    // if (chord == 0x7) {
-    //     return ((1 << 7) | (step << 8) | (1 << 12));
-    // } 
-    // if (chord == 0x6) {
-    //     return (1 << 6) | (step << 7) | (1 << 11);
-    // } 
-    // if (chord == 0x5) {
-    //     return (1 << 5) | (step << 6) | (1 << 10);
-    // } 
-    // if (chord == 0x4) {
-    //     return (1 << 4) | (step << 5) | (1 << 9);
-    // } 
-    // if (chord == 0x3) {
-    //     return (1 << 3) | (step << 4) | (1 << 8);
-    // } 
-    // if (chord == 0x2) {
-    //     return (1 << 2) | (step << 3) | (1 << 7);
-    // } 
-    // if (chord == 0x1) {
-    //     return (1 << 1) | (step << 2) | (1 << 6);
-    // } 
-    // if (chord == 0x0) {
-    //     return 1 | (step << 1) | (1 << 5);
-    // } 
-    return (1<<chord) | (step << (1+chord)) | (1 << (chord+5));
+    if (chord == 0x7) {
+        return ((1 << 7) | (step << 8) | (1 << 12));
+    } 
+    if (chord == 0x6) {
+        return (1 << 6) | (step << 7) | (1 << 11);
+    } 
+    if (chord == 0x5) {
+        return (1 << 5) | (step << 6) | (1 << 10);
+    } 
+    if (chord == 0x4) {
+        return (1 << 4) | (step << 5) | (1 << 9);
+    } 
+    if (chord == 0x3) {
+        return (1 << 3) | (step << 4) | (1 << 8);
+    } 
+    if (chord == 0x2) {
+        return (1 << 2) | (step << 3) | (1 << 7);
+    } 
+    if (chord == 0x1) {
+        return (1 << 1) | (step << 2) | (1 << 6);
+    } 
+    if (chord == 0x0) {
+        return 1 | (step << 1) | (1 << 5);
+    } 
+    //return (1<<chord) | (step << (1+chord)) | (1 << (chord+5));
 
     //switch to assignment rather than retirn values
     // switch(chord){
