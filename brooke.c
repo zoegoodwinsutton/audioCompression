@@ -178,7 +178,8 @@ int signum( int sample) {
 }
 
 int magnitude (int sample) {
-    return sample < 0 ? -sample : sample;
+    if (sample < 0) sample = -sample;
+    return sample;
 }
 
 int codewordCompression( unsigned int sample_magnitude, int sign){
@@ -289,6 +290,7 @@ void compression() {
     for(i = 0; i < num_samples; i ++){
         int sample = (sample_data[i] >> 2);
         int sign = signum(sample);
+
        unsigned int sample_magnitude = magnitude(sample) + 33; //from slides??
         //printf("magnitude %d ", sample_magnitude);
        compressed_samples[i] = ~codewordCompression(sample_magnitude, sign);
