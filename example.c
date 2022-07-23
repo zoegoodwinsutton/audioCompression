@@ -378,6 +378,7 @@ void compression() {
     }
     stop = clock();
     printf("Audio Compression using Mu Law: %f seconds \n\n", (double) (stop - start) / CLOCKS_PER_SEC);
+    printf("Audio Compression using Mu Law: %d clock cycles \n\n",  (stop - start));
 }
 
 void decompression() {
@@ -393,4 +394,5 @@ void decompression() {
     }
     stop = clock();
     printf("Audio Decompression using Mu Law: %f seconds\n\n", (double) (stop - start) / CLOCKS_PER_SEC);
+    printf("Audio Decompression using Mu Law: %d clock cycles\n\n", (stop - start));
 }
