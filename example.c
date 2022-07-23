@@ -184,7 +184,7 @@ void readWaveFileSamples(FILE *ptr){
         long size_of_each_sample = (header.channels * header.bits_per_sample) / 8;
         long bytes_in_each_channel = (size_of_each_sample/header.channels);
         num_samples = (8 * header.data_size) / (header.channels * header.bits_per_sample);
-        sample_data = calloc(num_samples, size_of_each_sample);
+        sample_data = calloc(num_samples, sizeof(int));
         if(sample_data == NULL){
             printf("Couldn't allocate memory\n");
             exit(1);
