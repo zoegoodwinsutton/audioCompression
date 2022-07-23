@@ -317,7 +317,7 @@ char codewordCompression( unsigned int sample_magnitude, int sign){
 unsigned int codewordDecompression(int codeword){
     int chord = (codeword & 0x70) >> 4;
     int step = (codeword & 0x0F);
-    return decompressionlut[chord] | (step << 8)
+    return decompressionlut[chord] | (step << 8);
 
     // if (chord == 0x7) {
     //     return ((1 << 7) | (step << 8) | (1 << 12));
