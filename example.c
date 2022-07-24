@@ -459,7 +459,7 @@ void compression()
     {
         int sample = (sample_data[i] >> 2);
         int sign = ((~sample >> 31) & 0x1); 
-        unsigned int sample_magnitude = (sample < 0 ? -sample : sample) + 33;
+        unsigned int sample_magnitude = ((sample < 0 ? -sample : sample) + 33);
         int ccw = ~codewordCompression(sample_magnitude, sign);
         compressed_samples[i] = ccw;   
     }
