@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <string.h>
-//#include <unistd.h>
 #include <stdlib.h>
 #include "wave.h"
 #include <time.h>
@@ -8,20 +7,20 @@ void readWaveFileSamples(FILE *ptr);
 int readWaveHeader(FILE *new_fp);
 unsigned int codewordDecompression(int codeword);
 char codewordCompression( unsigned int sample_magnitude, int sign);
-void writeWaveFileSamples();
 void compression();
 void decompression();
 time_t start, stop;
 
 FILE *fp;
-char *filename;
+FILE *outfile;
 struct HEADER header;
 unsigned char buffer4[4];
 unsigned char buffer2[2];
 int* sample_data;
 int* compressed_samples;
 long num_samples;
-static int compressionchord[256] = {0,0,1,1,2,2,2,2,3,3,3,3,3,3,3,3,
+const int compressionchord[256] = {
+                                    0,0,1,1,2,2,2,2,3,3,3,3,3,3,3,3,
                                     4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,
                                     5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
                                     5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
@@ -36,16 +35,19 @@ static int compressionchord[256] = {0,0,1,1,2,2,2,2,3,3,3,3,3,3,3,3,
                                     7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
                                     7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
                                     7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
-                                    7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7};
+                                    7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7
+                                };
         
-int main(int argc, char **argv){
-    if(argc < 2){
+int main(int argc, char **argv)
+{
+    if(argc < 2)
+    {
         printf("must add CLI arg for input .wav file.\n");
         exit(1);
     }
-    FILE *outfile;
     fp = fopen(argv[1], "rb");
-    if(fp == NULL){
+    if(fp == NULL)
+    {
         printf("Error opening input file\n");
         exit(1);
     }
@@ -55,9 +57,27 @@ int main(int argc, char **argv){
     
     readWaveHeader(outfile);
     readWaveFileSamples(fp);
-
     compression();
-    // OPTIMIZATION 5
+    decompression();
+
+    printf("\nWriting WAV file\n");
+    if(outfile == NULL)
+    {
+        printf("Unable to open output file.\n");
+        exit(1);
+    }
+    long size_of_each_sample = (header.channels * header.bits_per_sample) / 8;
+    int i;
+    for(i = 0; i < num_samples; i++)
+    {
+        buffer2[0] = (sample_data[i] & 0x000000FF);
+        buffer2[1] = ((sample_data[i] & 0X0000FF00) >> 8);
+        fwrite(buffer2, size_of_each_sample, 1, outfile);
+    }
+    printf("done writing to output\n");
+    fclose(outfile);
+
+    // OPTIMIZATION 5 //NOT BARRC
     // start = clock();
     // compressed_samples = calloc(num_samples, sizeof(int));
     // int i;
@@ -72,14 +92,6 @@ int main(int argc, char **argv){
     // stop = clock();
     // printf("Audio Compression using Mu Law: %f seconds \n", (double) (stop - start) / CLOCKS_PER_SEC);
     // printf("Audio Compression using Mu Law: %d clock cycles \n\n",  (stop - start));
-
-    int i;
-    // printf("\n");
-    // for(i = 0; i < num_samples; i++){
-    //      printf("%d ", compressed_samples[i]);
-    // }
-    decompression();
-    // OPTIMIZATION 5
     // start = clock();
     // // int i;
     // for(i = 0; i < num_samples; i ++){
@@ -93,32 +105,12 @@ int main(int argc, char **argv){
     // stop = clock();
     // printf("Audio Decompression using Mu Law: %f seconds\ns", (double) (stop - start) / CLOCKS_PER_SEC);
     // printf("Audio Decompression using Mu Law: %d clock cycles\n\n", (stop - start));
+} //BARR C
 
-    int j;
-    printf("\n");
-    // for(j = 0; j < num_samples; j++){
-    //     printf("%d ", sample_data[j]);
-    // }
-    printf("\nWriting WAV file\n");
-    
-    if(outfile == NULL){
-        printf("Unable to open output file.\n");
-        exit(1);
-    }
-    long size_of_each_sample = (header.channels * header.bits_per_sample) / 8;
-    for(i =0; i < num_samples; i++){
-        buffer2[0] = sample_data[i] & 0x000000FF;
-        buffer2[1] = (sample_data[i] & 0X0000FF00) >> 8;
-        fwrite(buffer2,size_of_each_sample,1,outfile);
-    }
-    printf("done writing to output\n");
-    fclose(outfile);
-    // writeWaveFileSamples(outfile);
-}
-int readWaveHeader( FILE *new_fp){
-    //just easy read it in one thing........
-        int read = 0;
+int readWaveHeader( FILE *new_fp)
+{
 
+    int read = 0;
     printf("Reading Wave File Headers.... \n");
 
     // 1 - 4: RIFF string - Marks the file as a riff file. Characters are each 1 byte long.
@@ -133,7 +125,7 @@ int readWaveHeader( FILE *new_fp){
     fwrite(&buffer4[2], sizeof(buffer4[2]), 1, new_fp);
     fwrite(&buffer4[3], sizeof(buffer4[3]), 1, new_fp);
     // convert little endian to big endian 4 byte int
-    header.overall_size  = buffer4[0] | (buffer4[1]<<8) | (buffer4[2]<<16) | (buffer4[3]<<24);
+    header.overall_size  = (buffer4[0] | (buffer4[1]<<8) | (buffer4[2]<<16) | (buffer4[3]<<24));
     printf("(5-8) Overall size: bytes:%u, Kb:%u \n", header.overall_size, header.overall_size/1024);
 
     // 9 - 12: WAV string - File Type Header. For our purposes, it always equals “WAVE”
@@ -152,19 +144,19 @@ int readWaveHeader( FILE *new_fp){
     fwrite(&buffer4[1], sizeof(buffer4[1]), 1, new_fp);
     fwrite(&buffer4[2], sizeof(buffer4[2]), 1, new_fp);
     fwrite(&buffer4[3], sizeof(buffer4[3]), 1, new_fp);
-    header.length_of_fmt = buffer4[0] | (buffer4[1] << 8) |	(buffer4[2] << 16) | (buffer4[3] << 24);
+    header.length_of_fmt = (buffer4[0] | (buffer4[1] << 8) |	(buffer4[2] << 16) | (buffer4[3] << 24));
     printf("(17-20) Length of Fmt header: %u \n", header.length_of_fmt);
 
     // 21 - 22: Type of format (1 is PCM) – 2 byte integer
     read = fread(buffer2, sizeof(buffer2), 1, fp);
     fwrite(&buffer2, sizeof(buffer2), 1, new_fp);
-    header.format_type = buffer2[0] | (buffer2[1] << 8);
+    header.format_type = (buffer2[0] | (buffer2[1] << 8));
     printf("(21-22) Format type: %u \n", header.format_type);
 
     // 23 - 24: Number of Channels – 2 byte integer
     read = fread(buffer2, sizeof(buffer2), 1, fp);
     fwrite(&buffer2, sizeof(buffer2), 1, new_fp);
-    header.channels = buffer2[0] | (buffer2[1] << 8);
+    header.channels = (buffer2[0] | (buffer2[1] << 8));
     printf("(23-24) Channels: %u \n", header.channels);
 
     // 25 - 28: Sample Rate – 32 byte integer; Sample Rate = Number of Samples per second
@@ -173,7 +165,7 @@ int readWaveHeader( FILE *new_fp){
     fwrite(&buffer4[1], sizeof(buffer4[1]), 1, new_fp);
     fwrite(&buffer4[2], sizeof(buffer4[2]), 1, new_fp);
     fwrite(&buffer4[3], sizeof(buffer4[3]), 1, new_fp);
-    header.sample_rate = buffer4[0] | (buffer4[1] << 8) | (buffer4[2] << 16) | (buffer4[3] << 24);
+    header.sample_rate = (buffer4[0] | (buffer4[1] << 8) | (buffer4[2] << 16) | (buffer4[3] << 24));
     printf("(25-28) Sample rate: %u\n", header.sample_rate);
 
     // 29 - 32: Byte rate - (Sample Rate * BitsPerSample * Channels) / 8
@@ -182,24 +174,25 @@ int readWaveHeader( FILE *new_fp){
     fwrite(&buffer4[1], sizeof(buffer4[1]), 1, new_fp);
     fwrite(&buffer4[2], sizeof(buffer4[2]), 1, new_fp);
     fwrite(&buffer4[3], sizeof(buffer4[3]), 1, new_fp);
-    header.byterate  = buffer4[0] | (buffer4[1] << 8) |	(buffer4[2] << 16) | (buffer4[3] << 24);
+    header.byterate  = (buffer4[0] | (buffer4[1] << 8) |	(buffer4[2] << 16) | (buffer4[3] << 24));
     printf("(29-32) Byte Rate: %u , Bit Rate:%u\n", header.byterate, header.byterate*8);
 
     // 33 - 34: Block Alignment - (BitsPerSample * Channels) / 8
     read = fread(buffer2, sizeof(buffer2), 1, fp);
     fwrite(&buffer2, sizeof(buffer2), 1, new_fp);
-    header.block_align = buffer2[0] | (buffer2[1] << 8);
+    header.block_align = (buffer2[0] | (buffer2[1] << 8));
     printf("(33-34) Block Alignment: %u \n", header.block_align);
 
     // 35 - 36: Bits per sample
     read = fread(buffer2, sizeof(buffer2), 1, fp);
     fwrite(&buffer2, sizeof(buffer2), 1, new_fp);
-    header.bits_per_sample = buffer2[0] | (buffer2[1] << 8);
+    header.bits_per_sample = (buffer2[0] | (buffer2[1] << 8));
     printf("(35-36) Bits per sample: %u \n", header.bits_per_sample);
 
     // 37 - 40: data string - “data” chunk header. Marks the beginning of the data section
     read = fread(header.data_chunk_header, sizeof(header.data_chunk_header), 1, fp);
-    if(strcmp(header.data_chunk_header, "LIST") == 0){
+    if(strcmp(header.data_chunk_header, "LIST") == 0)
+    {
         printf("I SEE A LIST!\n");
         int i;
         for(i = 0; i < 7 ; i++){
@@ -222,238 +215,267 @@ int readWaveHeader( FILE *new_fp){
     fwrite(&buffer4[1], sizeof(buffer4[1]), 1, new_fp);
     fwrite(&buffer4[2], sizeof(buffer4[2]), 1, new_fp);
     fwrite(&buffer4[3], sizeof(buffer4[3]), 1, new_fp);
-    header.data_size = buffer4[0] |	(buffer4[1] << 8) |	(buffer4[2] << 16) | (buffer4[3] << 24 );
+    header.data_size = (buffer4[0] |	(buffer4[1] << 8) |	(buffer4[2] << 16) | (buffer4[3] << 24 ));
     printf("(41-44) Size of data chunk: %u \n", header.data_size);
-
     printf("COMPLETED Reading Wave File Headers \n\n");
 }
-void readWaveFileSamples(FILE *ptr){
+
+void readWaveFileSamples(FILE *ptr)
+{
     printf("Starting reading WAV file samples\n");
-    if(header.format_type == 1){
+    if(header.format_type == 1)
+    {
         printf("Number of channels %i", header.channels);
-        long size_of_each_sample = (header.channels * header.bits_per_sample) / 8;
+        long size_of_each_sample = ((header.channels * header.bits_per_sample) / 8);
         long bytes_in_each_channel = (size_of_each_sample/header.channels);
         num_samples = (8 * header.data_size) / (header.channels * header.bits_per_sample);
         sample_data = calloc(num_samples, sizeof(int));
-        if(sample_data == NULL){
+        if(sample_data == NULL)
+        {
             printf("Couldn't allocate memory\n");
             exit(1);
         }
         int i;
-        for(i = 0 ; i < num_samples; i++){
+        for(i = 0 ; i < num_samples; i++)
+        {
             fread(buffer2, size_of_each_sample, 1, ptr);
-            sample_data[i] = (buffer2[0]) | (buffer2[1] << 8);
+            sample_data[i] = ((buffer2[0]) | (buffer2[1] << 8));
         }
-    }else{
+    }
+    else
+    {
         printf("Can only read PCM.");
         exit(1);
     }
     printf("Finished reading WAV file samples\n");
-}
+} //BARR C
 
-int signum( int sample) {
-    // if (sample < 0) return 0;
-    // else return 1;
-    // return sample < 0 ? 0 : 1;
-    return ((~sample >> 31) & 0x1);
-}
+// int sign(int sample) 
+// {
+//     if (sample < 0) 
+//     {
+//         return 0;
+//     }
+//     else 
+//     {
+//         return 1;
+//     }
+// } BARR C
 
-int magnitude (int sample) {
-    // if (sample < 0) return -sample;
-    // else return sample;
-    return sample < 0 ? -sample : sample;
+// int magnitude (int sample) 
+// {
+//     if (sample < 0) 
+//     {
+//         sample = -sample;
+//     }
+//     return sample;
+// }BARR C
 
-    //if(sample < 0) sample = -sample
-    //return sample
-}
-
-inline char codewordCompression( unsigned int sample_magnitude, int sign){
-    // char chord, step;
-    // char ccw;
-
-    //his examples
-    //if ((sample_magnitude >> 12) == 1){
-    //     ccw = (0x7 << 4) & ((sample_magnitude >> 8) & 0xF); //im 95% sure hes wrong about the first & it has to be an | or this is 0
-    //     ccw = ccw | (sign << 7);
-    // }
+inline char codewordCompression( unsigned int sample_magnitude, int sign)
+{
+    // OPTIMIZATION 2 LUT
+    char chord = compressionchord[(sample_magnitude >> 5)];
+    char step = ((sample_magnitude >> (chord+1)) & 0xF);
+    char ccw = ((sign << 7) | (chord << 4) | step);
+    return ccw;
     
     // OPTIMIZATION 3 CLZ
-    // if we get the chord then we can calculate everything else
+    // char chord;
     // __asm__ __volatile__ (
     //     "clz\t%0, %1"
     //     : "=r" (chord)
     //     : "r" (sample_magnitude)
     // );
-    // step = (sample_magnitude >> (chord + 1)) & 0xF;
-    // ccw = ((sign << 7) | (chord << 4) | step);
+    // char step = ((sample_magnitude >> (chord + 1)) & 0xF);
+    // char ccw = ((sign << 7) | (chord << 4) | step);
     // return ccw;
 
-    //for loop to calculate leading 0s then 
-
-    // OPTIMIZATION 2 LUT
-    char chord = compressionchord[(sample_magnitude >> 5)];
-    char step = (sample_magnitude >> (chord+1)) & 0xF;
-    char ccw = ((sign << 7) | (chord << 4)| step);
-    return ccw;
-        //https://www.dsprelated.com/showthread/comp.dsp/51552-1.php
-    // if (sample_magnitude & (1 << 5)){
-    //     chord = 0x0;
-    //     step = (sample_magnitude >> 1) & 0xF;
+    //ORIGINAL
+    // char chord, step, ccw;
+    // if (sample_magnitude >> 12)
+    // {
+    //     chord = 0x7;
+    //     step = ((sample_magnitude >> 8) & 0xF);
+    //     ccw = ((sign << 7) | (chord << 4) | step);
+    //     return ccw;
+    // } 
+    // if (sample_magnitude >> 11)
+    // {
+    //     chord = 0x6;
+    //     step = ((sample_magnitude >> 7) & 0xF);
     //     ccw = ((sign << 7) | (chord << 4) | step);
     //     return ccw;
     // }
-    // if (sample_magnitude & (1 << 12)){
-    //     chord = 0x7;
-    //     step = (sample_magnitude >> 8) & 0xF;
-    //     ccw = (sign << 7) | (chord << 4) | step;
-    //     return ccw;
-    // } 
-    // if (sample_magnitude & (1 << 11)){
-    //     chord = 0x6;
-    //     step = (sample_magnitude >> 7) & 0xF;
-    //     ccw = (sign << 7) | (chord << 4) | step;
-    //     return ccw;
-    // }
-    // if (sample_magnitude & (1 << 10)){
+    // if (sample_magnitude >> 10)
+    // {
     //     chord = 0x5;
-    //     step = (sample_magnitude >> 6) & 0xF;
-    //     ccw = (sign << 7) | (chord << 4) | step;
+    //     step = ((sample_magnitude >> 6) & 0xF);
+    //     ccw = ((sign << 7) | (chord << 4) | step);
     //     return ccw;
     // }
-    // if (sample_magnitude & (1 << 9)){
+    // if (sample_magnitude >> 9)
+    // {
     //     chord = 0x4;
-    //     step = (sample_magnitude >> 5) & 0xF;
-    //     ccw = (sign << 7) | (chord << 4) | step;
+    //     step = ((sample_magnitude >> 5) & 0xF);
+    //     ccw = ((sign << 7) | (chord << 4) | step);
     //     return ccw;
     // }
-    // if (sample_magnitude & (1 << 8)){
+    // if (sample_magnitude >> 8)
+    // {
     //     chord = 0x3;
-    //     step = (sample_magnitude >> 4) & 0xF;
-    //     ccw = (sign << 7) | (chord << 4) | step;
+    //     step = ((sample_magnitude >> 4) & 0xF);
+    //     ccw = ((sign << 7) | (chord << 4) | step);
     //     return ccw;
     // }
-    // if (sample_magnitude & (1 << 7)){
+    // if (sample_magnitude >> 7)
+    // {
     //     chord = 0x2;
-    //     step = (sample_magnitude >> 3) & 0xF;
-    //     ccw = (sign << 7) | (chord << 4) | step;
+    //     step = ((sample_magnitude >> 3) & 0xF);
+    //     ccw = ((sign << 7) | (chord << 4) | step);
     //     return ccw;
     // }
-    // if (sample_magnitude & (1 << 6)){
+    // if (sample_magnitude >> 6)
+    // {
     //     chord = 0x1;
-    //     step = (sample_magnitude >> 2) & 0xF;
-    //     ccw = (sign << 7) | (chord << 4) | step;
+    //     step = ((sample_magnitude >> 2) & 0xF);
+    //     ccw = ((sign << 7) | (chord << 4) | step);
     //     return ccw;
     // }
-
-    // OPTIMIZATION 4
-
-    // if (sample_magnitude & (1 << 5)){
+    // if (sample_magnitude >> 5)
+    // {
     //     chord = 0x0;
-    // }else if (sample_magnitude & (1 << 12)){
+    //     step = ((sample_magnitude >> 1) & 0xF);
+    //     ccw = ((sign << 7) | (chord << 4) | step);
+    //     return ccw;
+    // }
+
+    // OPTIMIZATION - IF/ELSE
+    // char chord, step, ccw;
+    // if (sample_magnitude >> 12)
+    // {
     //     chord = 0x7;
-    // }else if (sample_magnitude & (1 << 11)){
+    // }
+    // else if (sample_magnitude >> 11)
+    // {
     //     chord = 0x6;
-    // }else if (sample_magnitude & (1 << 10)){
+    // }
+    // else if (sample_magnitude >> 10)
+    // {
     //     chord = 0x5;
-    // }else if (sample_magnitude & (1 << 9)){
+    // }
+    // else if (sample_magnitude >> 9)
+    // {
     //     chord = 0x4;
-    // }else if (sample_magnitude & (1 << 8)){
+    // }
+    // else if (sample_magnitude >> 8)
+    // {
     //     chord = 0x3;
-    // }else if(sample_magnitude & (1 << 7)){
+    // }
+    // else if(sample_magnitude >> 7)
+    // {
     //     chord = 0x2;
-    // }else if (sample_magnitude & (1 << 6)){
+    // }
+    // else if (sample_magnitude >> 6)
+    // {
     //     chord = 0x1;
     // }
-    // step = (sample_magnitude >> (chord + 1)) & 0xF;
-    // ccw = (sign << 7) | (chord << 4) | step;
-    // return ccw;
-
-    //rempove ccw and return and put here
-    // step = (sample_magnitude >> (chord + 1)) & 0xF;
+    // else if (sample_magnitude >> 5)
+    // {
+    //     chord = 0x0;
+    // }
+    // step = ((sample_magnitude >> (chord + 1)) & 0xF);
     // ccw = ((sign << 7) | (chord << 4) | step);
     // return ccw;
-}
+} //BARR C
 
-inline unsigned int codewordDecompression(int codeword){
-    int chord = (codeword & 0x70) >> 4;
+inline unsigned int codewordDecompression(int codeword)
+{
+    //OPTMIZATION 3
+    int chord = ((codeword & 0x70) >> 4);
     int step = (codeword & 0x0F);
-    // return decompressionlut[chord] | (step << 8);
+    return ((1<<chord) | (step << (chord+1)) | (1 << (chord+5)));
 
-    // if (chord == 0x7) {
+    //ORIGINAL
+    // if (chord == 0x7) 
+    // {
     //     return ((1 << 7) | (step << 8) | (1 << 12));
     // } 
-    // if (chord == 0x6) {
-    //     return (1 << 6) | (step << 7) | (1 << 11);
+    // if (chord == 0x6) 
+    // {
+    //     return ((1 << 6) | (step << 7) | (1 << 11));
     // } 
-    // if (chord == 0x5) {
-    //     return (1 << 5) | (step << 6) | (1 << 10);
+    // if (chord == 0x5) 
+    // {
+    //     return ((1 << 5) | (step << 6) | (1 << 10));
     // } 
-    // if (chord == 0x4) {
-    //     return (1 << 4) | (step << 5) | (1 << 9);
+    // if (chord == 0x4) 
+    // {
+    //     return ((1 << 4) | (step << 5) | (1 << 9));
     // } 
-    // if (chord == 0x3) {
-    //     return (1 << 3) | (step << 4) | (1 << 8);
+    // if (chord == 0x3) 
+    // {
+    //     return ((1 << 3) | (step << 4) | (1 << 8));
     // } 
-    // if (chord == 0x2) {
-    //     return (1 << 2) | (step << 3) | (1 << 7);
+    // if (chord == 0x2) 
+    // {
+    //     return ((1 << 2) | (step << 3) | (1 << 7));
     // } 
-    // if (chord == 0x1) {
-    //     return (1 << 1) | (step << 2) | (1 << 6);
+    // if (chord == 0x1) 
+    // {
+    //     return ((1 << 1) | (step << 2) | (1 << 6));
     // } 
-    // if (chord == 0x0) {
-    //     return 1 | (step << 1) | (1 << 5);
+    // if (chord == 0x0)
+    // {
+    //     return (1 | (step << 1) | (1 << 5));
     // } 
-    return (1<<chord) | (step << (1+chord)) | (1 << (chord+5));
-
-    //switch to assignment rather than retirn values
-    // switch(chord){
+    
+    //OPTIMIZATION SWITCH
+    // switch(chord)
+    //{
     //     case 0x7:
     //         return ((1 << 7) | (step << 8) | (1 << 12));
     //     case 0x6:
-    //         return (1 << 6) | (step << 7) | (1 << 11);
+    //         return ((1 << 6) | (step << 7) | (1 << 11));
     //     case 0x5:
-    //         return (1 << 5) | (step << 6) | (1 << 10);
+    //         return ((1 << 5) | (step << 6) | (1 << 10));
     //     case 0x4:
-    //         return (1 << 4) | (step << 5) | (1 << 9);
+    //         return ((1 << 4) | (step << 5) | (1 << 9));
     //     case 0x3:
-    //         return (1 << 3) | (step << 4) | (1 << 8);
+    //         return ((1 << 3) | (step << 4) | (1 << 8));
     //     case 0x2:
-    //         return (1 << 2) | (step << 3) | (1 << 7);
+    //         return ((1 << 2) | (step << 3) | (1 << 7));
     //     case 0x1:
-    //         return (1 << 1) | (step << 2) | (1 << 6);
+    //         return ((1 << 1) | (step << 2) | (1 << 6));
     //     case 0x0:
-    //         return 1 | (step << 1) | (1 << 5);
+    //         return ((1) | (step << 1) | (1 << 5));
     // } 
-}
+} //BARR C
 
-void compression() {
-    start = clock();
+void compression() 
+{
     compressed_samples = calloc(num_samples, sizeof(int));
     int i;
-    for(i = 0; i < num_samples; i ++){
+    for(i = 0; i < num_samples; i ++)
+    {
         int sample = (sample_data[i] >> 2);
-        int sign = ((~sample >> 31) & 0x1); //put the lo
-        unsigned int sample_magnitude = (sample < 0 ? -sample : sample) + 33; //put the logic here instead of function call
-        int temp = ~codewordCompression(sample_magnitude, sign);
-        compressed_samples[i] = temp;   
+        int sign = ((~sample >> 31) & 0x1); 
+        unsigned int sample_magnitude = (sample < 0 ? -sample : sample) + 33;
+        int ccw = ~codewordCompression(sample_magnitude, sign);
+        compressed_samples[i] = ccw;   
     }
-    stop = clock();
-    printf("Audio Compression using Mu Law: %f seconds \n", (double) (stop - start) / CLOCKS_PER_SEC);
-    printf("Audio Compression using Mu Law: %d clock cycles \n\n",  (stop - start));
-}
+} //BARR C
 
-void decompression() {
-    start = clock();
+void decompression() 
+{
     int i;
-    for(i = 0; i < num_samples; i ++){
+    for(i = 0; i < num_samples; i ++)
+    {
         int sample = ~(compressed_samples[i]);
-        int sign = (sample & 0x80) >> 7;
+        int sign = ((sample & 0x80) >> 7);
         unsigned int sample_magnitude = (codewordDecompression(sample) - 33); 
-        if(sign == 1) sample = sample_magnitude;
-        else sample = -sample_magnitude;
-        sample_data[i] = sample << 2;
+        sample = (sign == 1 ? sample_magnitude : -sample_magnitude);
+        // if (sign == 1) sample = sample_magnitude;
+        // else sample = -sample_magnitude;
+        sample_data[i] = (sample << 2);
     }
-    stop = clock();
-    printf("Audio Decompression using Mu Law: %f seconds\ns", (double) (stop - start) / CLOCKS_PER_SEC);
-    printf("Audio Decompression using Mu Law: %d clock cycles\n\n", (stop - start));
-}
+} //BARR C
