@@ -21,23 +21,22 @@ unsigned char buffer2[2];
 int* sample_data;
 int* compressed_samples;
 long num_samples;
-static int exp_lut[256] = {0,0,1,1,2,2,2,2,3,3,3,3,3,3,3,3,
-                               4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,
-                               5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
-                               5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
-                               6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
-                               6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
-                               6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
-                               6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
-                               7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
-                               7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
-                               7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
-                               7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
-                               7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
-                               7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
-                               7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
-                               7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7};
-static unsigned int decompressionlut[8] = {33, 66, 132, 264, 528, 1056, 2212, 4224};
+static int compressionchord[256] = {0,0,1,1,2,2,2,2,3,3,3,3,3,3,3,3,
+                                    4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,
+                                    5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
+                                    5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
+                                    6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
+                                    6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
+                                    6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
+                                    6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
+                                    7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+                                    7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+                                    7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+                                    7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+                                    7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+                                    7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+                                    7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+                                    7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7};
         
 int main(int argc, char **argv){
     if(argc < 2){
@@ -269,8 +268,8 @@ int magnitude (int sample) {
 }
 
 inline char codewordCompression( unsigned int sample_magnitude, int sign){
-    char chord, step;
-    char ccw;
+    // char chord, step;
+    // char ccw;
 
     //his examples
     //if ((sample_magnitude >> 12) == 1){
@@ -292,9 +291,9 @@ inline char codewordCompression( unsigned int sample_magnitude, int sign){
     //for loop to calculate leading 0s then 
 
     // OPTIMIZATION 2 LUT
-    chord = exp_lut[(sample_magnitude >> 4) & 0xFF];
-    step = (sample_magnitude >> (chord+1)) & 0xF;
-    ccw = ((sign << 7) | (chord << 4)| step);
+    char chord = compressionchord[(sample_magnitude >> 5)];
+    char step = (sample_magnitude >> (chord+1)) & 0xF;
+    char ccw = ((sign << 7) | (chord << 4)| step);
     return ccw;
         //https://www.dsprelated.com/showthread/comp.dsp/51552-1.php
     // if (sample_magnitude & (1 << 5)){
