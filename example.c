@@ -268,7 +268,7 @@ int magnitude (int sample) {
     //return sample
 }
 
-char codewordCompression( unsigned int sample_magnitude, int sign){
+inline char codewordCompression( unsigned int sample_magnitude, int sign){
     char chord, step;
     char ccw;
 
@@ -375,7 +375,7 @@ char codewordCompression( unsigned int sample_magnitude, int sign){
     // return ccw;
 }
 
-unsigned int codewordDecompression(int codeword){
+inline unsigned int codewordDecompression(int codeword){
     int chord = (codeword & 0x70) >> 4;
     int step = (codeword & 0x0F);
     // return decompressionlut[chord] | (step << 8);
