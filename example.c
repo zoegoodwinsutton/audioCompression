@@ -280,20 +280,22 @@ char codewordCompression( unsigned int sample_magnitude, int sign){
     
     // OPTIMIZATION 3 CLZ
     // if we get the chord then we can calculate everything else
-    __asm__ __volatile__ (
-        "clz\t%0, %1"
-        : "=r" (chord)
-        : "r" (sample_magnitude)
-    );
-    step = (sample_magnitude >> (chord + 1)) & 0xF;
-    ccw = ((sign << 7) | (chord << 4) | step);
-    return ccw;
+    // __asm__ __volatile__ (
+    //     "clz\t%0, %1"
+    //     : "=r" (chord)
+    //     : "r" (sample_magnitude)
+    // );
+    // step = (sample_magnitude >> (chord + 1)) & 0xF;
+    // ccw = ((sign << 7) | (chord << 4) | step);
+    // return ccw;
 
     //for loop to calculate leading 0s then 
 
-        
-        // chord = exp_lut[(sample_magnitude >> 4) & 0xFF]; //not 100% sure on this would have to check if chords are matching
-        // step = (sample_magnitude >> (chord+1)) & 0xF;
+    // OPTIMIZATION 2 LUT
+    chord = exp_lut[(sample_magnitude >> 4) & 0xFF];
+    step = (sample_magnitude >> (chord+1)) & 0xF;
+    ccw = ((sign << 7) | (chord << 4)| step);
+    return ccw;
         //https://www.dsprelated.com/showthread/comp.dsp/51552-1.php
     // if (sample_magnitude & (1 << 5)){
     //     chord = 0x0;
@@ -378,31 +380,31 @@ unsigned int codewordDecompression(int codeword){
     int step = (codeword & 0x0F);
     // return decompressionlut[chord] | (step << 8);
 
-    if (chord == 0x7) {
-        return ((1 << 7) | (step << 8) | (1 << 12));
-    } 
-    if (chord == 0x6) {
-        return (1 << 6) | (step << 7) | (1 << 11);
-    } 
-    if (chord == 0x5) {
-        return (1 << 5) | (step << 6) | (1 << 10);
-    } 
-    if (chord == 0x4) {
-        return (1 << 4) | (step << 5) | (1 << 9);
-    } 
-    if (chord == 0x3) {
-        return (1 << 3) | (step << 4) | (1 << 8);
-    } 
-    if (chord == 0x2) {
-        return (1 << 2) | (step << 3) | (1 << 7);
-    } 
-    if (chord == 0x1) {
-        return (1 << 1) | (step << 2) | (1 << 6);
-    } 
-    if (chord == 0x0) {
-        return 1 | (step << 1) | (1 << 5);
-    } 
-    //return (1<<chord) | (step << (1+chord)) | (1 << (chord+5));
+    // if (chord == 0x7) {
+    //     return ((1 << 7) | (step << 8) | (1 << 12));
+    // } 
+    // if (chord == 0x6) {
+    //     return (1 << 6) | (step << 7) | (1 << 11);
+    // } 
+    // if (chord == 0x5) {
+    //     return (1 << 5) | (step << 6) | (1 << 10);
+    // } 
+    // if (chord == 0x4) {
+    //     return (1 << 4) | (step << 5) | (1 << 9);
+    // } 
+    // if (chord == 0x3) {
+    //     return (1 << 3) | (step << 4) | (1 << 8);
+    // } 
+    // if (chord == 0x2) {
+    //     return (1 << 2) | (step << 3) | (1 << 7);
+    // } 
+    // if (chord == 0x1) {
+    //     return (1 << 1) | (step << 2) | (1 << 6);
+    // } 
+    // if (chord == 0x0) {
+    //     return 1 | (step << 1) | (1 << 5);
+    // } 
+    return (1<<chord) | (step << (1+chord)) | (1 << (chord+5));
 
     //switch to assignment rather than retirn values
     // switch(chord){
@@ -431,8 +433,8 @@ void compression() {
     int i;
     for(i = 0; i < num_samples; i ++){
         int sample = (sample_data[i] >> 2);
-        int sign = signum(sample); //put the lo
-        unsigned int sample_magnitude = magnitude(sample) + 33; //put the logic here instead of function call
+        int sign = ((~sample >> 31) & 0x1); //put the lo
+        unsigned int sample_magnitude = (sample < 0 ? -sample : sample) + 33; //put the logic here instead of function call
         int temp = ~codewordCompression(sample_magnitude, sign);
         compressed_samples[i] = temp;   
     }
