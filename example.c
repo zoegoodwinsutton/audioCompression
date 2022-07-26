@@ -274,24 +274,24 @@ void readWaveFileSamples(FILE *ptr)
 inline char codewordCompression( unsigned int sample_magnitude, int sign)
 {
     // OPTIMIZATION 2 LUT
-    char chord = compressionchord[(sample_magnitude >> 5)];
-    char step = ((sample_magnitude >> (chord+1)) & 0xF);
-    char ccw = ((sign << 7) | (chord << 4) | step);
-    return ccw;
-
-    //FOR LOOP
-    // char chord = 0;
-    // int i;
-    // for(i = 0; i < 14; i++)
-    // {
-    //     if (sample_magnitude & (1 << i))
-    //     {
-    //         chord = chord + 1;
-    //     }
-    // }
-    // char step = ((sample_magnitude >> (chord + 1)) & 0xF);
+    // char chord = compressionchord[(sample_magnitude >> 5)];
+    // char step = ((sample_magnitude >> (chord+1)) & 0xF);
     // char ccw = ((sign << 7) | (chord << 4) | step);
     // return ccw;
+
+    //FOR LOOP
+    char chord = 0;
+    int i;
+    for(i = 0; i < 14; i++)
+    {
+        if (sample_magnitude & (1 << i))
+        {
+            chord = chord + 1;
+        }
+    }
+    char step = ((sample_magnitude >> (chord + 1)) & 0xF);
+    char ccw = ((sign << 7) | (chord << 4) | step);
+    return ccw;
 
     
     // OPTIMIZATION 3 CLZ
