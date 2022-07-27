@@ -19,7 +19,7 @@ unsigned char buffer2[2];
 int* sample_data;
 int* compressed_samples;
 long num_samples;
-const int compressionchord[256] = {
+const char compressionchord[256] = {
                                     0,0,1,1,2,2,2,2,3,3,3,3,3,3,3,3,
                                     4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,
                                     5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
@@ -260,7 +260,7 @@ void readWaveFileSamples(FILE *ptr)
 //     {
 //         return 1;
 //     }
-// } BARR C
+// } 
 
 // int magnitude (int sample) 
 // {
@@ -269,7 +269,7 @@ void readWaveFileSamples(FILE *ptr)
 //         sample = -sample;
 //     }
 //     return sample;
-// }BARR C
+// }
 
 inline char codewordCompression( unsigned int sample_magnitude, int sign)
 {
@@ -278,6 +278,21 @@ inline char codewordCompression( unsigned int sample_magnitude, int sign)
     char step = ((sample_magnitude >> (chord+1)) & 0xF);
     char ccw = ((sign << 7) | (chord << 4) | step);
     return ccw;
+
+    //FOR LOOP
+    // char chord = 0;
+    // int i;
+    // for(i = 0; i < 14; i++)
+    // {
+    //     if (sample_magnitude & (1 << i))
+    //     {
+    //         chord = chord + 1;
+    //     }
+    // }
+    // char step = ((sample_magnitude >> (chord + 1)) & 0xF);
+    // char ccw = ((sign << 7) | (chord << 4) | step);
+    // return ccw;
+
     
     // OPTIMIZATION 3 CLZ
     // char chord;
@@ -386,7 +401,7 @@ inline char codewordCompression( unsigned int sample_magnitude, int sign)
     // step = ((sample_magnitude >> (chord + 1)) & 0xF);
     // ccw = ((sign << 7) | (chord << 4) | step);
     // return ccw;
-} //BARR C
+}
 
 inline unsigned int codewordDecompression(int codeword)
 {
@@ -395,7 +410,7 @@ inline unsigned int codewordDecompression(int codeword)
     int step = (codeword & 0x0F);
     return ((1<<chord) | (step << (chord+1)) | (1 << (chord+5)));
 
-    //ORIGINAL
+    // //ORIGINAL
     // if (chord == 0x7) 
     // {
     //     return ((1 << 7) | (step << 8) | (1 << 12));
@@ -449,7 +464,7 @@ inline unsigned int codewordDecompression(int codeword)
     //     case 0x0:
     //         return ((1) | (step << 1) | (1 << 5));
     // } 
-} //BARR C
+}
 
 void compression() 
 {
@@ -463,7 +478,7 @@ void compression()
         int ccw = ~codewordCompression(sample_magnitude, sign);
         compressed_samples[i] = ccw;   
     }
-} //BARR C
+}
 
 void decompression() 
 {
@@ -473,9 +488,8 @@ void decompression()
         int sample = ~(compressed_samples[i]);
         int sign = ((sample & 0x80) >> 7);
         unsigned int sample_magnitude = (codewordDecompression(sample) - 33); 
-        sample = (sign == 1 ? sample_magnitude : -sample_magnitude);
-        // if (sign == 1) sample = sample_magnitude;
-        // else sample = -sample_magnitude;
+        if (sign == 1) sample = sample_magnitude;
+        else sample = -sample_magnitude;
         sample_data[i] = (sample << 2);
     }
-} //BARR C
+}
