@@ -274,24 +274,24 @@ void readWaveFileSamples(FILE *ptr)
 inline char codewordCompression( unsigned int sample_magnitude, int sign)
 {
     // OPTIMIZATION 2 LUT
-    // char chord = compressionchord[(sample_magnitude >> 5)];
-    // char step = ((sample_magnitude >> (chord+1)) & 0xF);
-    // char ccw = ((sign << 7) | (chord << 4) | step);
-    // return ccw;
-
-    //FOR LOOP
-    char chord = 0;
-    int i;
-    for(i = 0; i < 14; i++)
-    {
-        if (sample_magnitude & (1 << i))
-        {
-            chord = chord + 1;
-        }
-    }
-    char step = ((sample_magnitude >> (chord + 1)) & 0xF);
+    char chord = compressionchord[(sample_magnitude >> 5)];
+    char step = ((sample_magnitude >> (chord+1)) & 0xF);
     char ccw = ((sign << 7) | (chord << 4) | step);
     return ccw;
+
+    //FOR LOOP
+    // char chord = 0;
+    // int i;
+    // for(i = 0; i < 14; i++)
+    // {
+    //     if (sample_magnitude & (1 << i))
+    //     {
+    //         chord = chord + 1;
+    //     }
+    // }
+    // char step = ((sample_magnitude >> (chord + 1)) & 0xF);
+    // char ccw = ((sign << 7) | (chord << 4) | step);
+    // return ccw;
 
     
     // OPTIMIZATION 3 CLZ
@@ -410,39 +410,39 @@ inline unsigned int codewordDecompression(int codeword)
     int step = (codeword & 0x0F);
     return ((1<<chord) | (step << (chord+1)) | (1 << (chord+5)));
 
-    //ORIGINAL
-    if (chord == 0x7) 
-    {
-        return ((1 << 7) | (step << 8) | (1 << 12));
-    } 
-    if (chord == 0x6) 
-    {
-        return ((1 << 6) | (step << 7) | (1 << 11));
-    } 
-    if (chord == 0x5) 
-    {
-        return ((1 << 5) | (step << 6) | (1 << 10));
-    } 
-    if (chord == 0x4) 
-    {
-        return ((1 << 4) | (step << 5) | (1 << 9));
-    } 
-    if (chord == 0x3) 
-    {
-        return ((1 << 3) | (step << 4) | (1 << 8));
-    } 
-    if (chord == 0x2) 
-    {
-        return ((1 << 2) | (step << 3) | (1 << 7));
-    } 
-    if (chord == 0x1) 
-    {
-        return ((1 << 1) | (step << 2) | (1 << 6));
-    } 
-    if (chord == 0x0)
-    {
-        return (1 | (step << 1) | (1 << 5));
-    } 
+    // //ORIGINAL
+    // if (chord == 0x7) 
+    // {
+    //     return ((1 << 7) | (step << 8) | (1 << 12));
+    // } 
+    // if (chord == 0x6) 
+    // {
+    //     return ((1 << 6) | (step << 7) | (1 << 11));
+    // } 
+    // if (chord == 0x5) 
+    // {
+    //     return ((1 << 5) | (step << 6) | (1 << 10));
+    // } 
+    // if (chord == 0x4) 
+    // {
+    //     return ((1 << 4) | (step << 5) | (1 << 9));
+    // } 
+    // if (chord == 0x3) 
+    // {
+    //     return ((1 << 3) | (step << 4) | (1 << 8));
+    // } 
+    // if (chord == 0x2) 
+    // {
+    //     return ((1 << 2) | (step << 3) | (1 << 7));
+    // } 
+    // if (chord == 0x1) 
+    // {
+    //     return ((1 << 1) | (step << 2) | (1 << 6));
+    // } 
+    // if (chord == 0x0)
+    // {
+    //     return (1 | (step << 1) | (1 << 5));
+    // } 
     
     //OPTIMIZATION SWITCH
     // switch(chord)
