@@ -274,10 +274,10 @@ void readWaveFileSamples(FILE *ptr)
 inline char codewordCompression( unsigned int sample_magnitude, int sign)
 {
     // OPTIMIZATION 2 LUT
-    char chord = compressionchord[(sample_magnitude >> 5)];
-    char step = ((sample_magnitude >> (chord+1)) & 0xF);
-    char ccw = ((sign << 7) | (chord << 4) | step);
-    return ccw;
+    // char chord = compressionchord[(sample_magnitude >> 5)];
+    // char step = ((sample_magnitude >> (chord+1)) & 0xF);
+    // char ccw = ((sign << 7) | (chord << 4) | step);
+    // return ccw;
     
     // OPTIMIZATION 3 CLZ
     // char chord;
@@ -291,63 +291,63 @@ inline char codewordCompression( unsigned int sample_magnitude, int sign)
     // return ccw;
 
     //ORIGINAL
-    // char chord, step, ccw;
-    // if (sample_magnitude >> 12)
-    // {
-    //     chord = 0x7;
-    //     step = ((sample_magnitude >> 8) & 0xF);
-    //     ccw = ((sign << 7) | (chord << 4) | step);
-    //     return ccw;
-    // } 
-    // if (sample_magnitude >> 11)
-    // {
-    //     chord = 0x6;
-    //     step = ((sample_magnitude >> 7) & 0xF);
-    //     ccw = ((sign << 7) | (chord << 4) | step);
-    //     return ccw;
-    // }
-    // if (sample_magnitude >> 10)
-    // {
-    //     chord = 0x5;
-    //     step = ((sample_magnitude >> 6) & 0xF);
-    //     ccw = ((sign << 7) | (chord << 4) | step);
-    //     return ccw;
-    // }
-    // if (sample_magnitude >> 9)
-    // {
-    //     chord = 0x4;
-    //     step = ((sample_magnitude >> 5) & 0xF);
-    //     ccw = ((sign << 7) | (chord << 4) | step);
-    //     return ccw;
-    // }
-    // if (sample_magnitude >> 8)
-    // {
-    //     chord = 0x3;
-    //     step = ((sample_magnitude >> 4) & 0xF);
-    //     ccw = ((sign << 7) | (chord << 4) | step);
-    //     return ccw;
-    // }
-    // if (sample_magnitude >> 7)
-    // {
-    //     chord = 0x2;
-    //     step = ((sample_magnitude >> 3) & 0xF);
-    //     ccw = ((sign << 7) | (chord << 4) | step);
-    //     return ccw;
-    // }
-    // if (sample_magnitude >> 6)
-    // {
-    //     chord = 0x1;
-    //     step = ((sample_magnitude >> 2) & 0xF);
-    //     ccw = ((sign << 7) | (chord << 4) | step);
-    //     return ccw;
-    // }
-    // if (sample_magnitude >> 5)
-    // {
-    //     chord = 0x0;
-    //     step = ((sample_magnitude >> 1) & 0xF);
-    //     ccw = ((sign << 7) | (chord << 4) | step);
-    //     return ccw;
-    // }
+    char chord, step, ccw;
+    if (sample_magnitude >> 12)
+    {
+        chord = 0x7;
+        step = ((sample_magnitude >> 8) & 0xF);
+        ccw = ((sign << 7) | (chord << 4) | step);
+        return ccw;
+    } 
+    if (sample_magnitude >> 11)
+    {
+        chord = 0x6;
+        step = ((sample_magnitude >> 7) & 0xF);
+        ccw = ((sign << 7) | (chord << 4) | step);
+        return ccw;
+    }
+    if (sample_magnitude >> 10)
+    {
+        chord = 0x5;
+        step = ((sample_magnitude >> 6) & 0xF);
+        ccw = ((sign << 7) | (chord << 4) | step);
+        return ccw;
+    }
+    if (sample_magnitude >> 9)
+    {
+        chord = 0x4;
+        step = ((sample_magnitude >> 5) & 0xF);
+        ccw = ((sign << 7) | (chord << 4) | step);
+        return ccw;
+    }
+    if (sample_magnitude >> 8)
+    {
+        chord = 0x3;
+        step = ((sample_magnitude >> 4) & 0xF);
+        ccw = ((sign << 7) | (chord << 4) | step);
+        return ccw;
+    }
+    if (sample_magnitude >> 7)
+    {
+        chord = 0x2;
+        step = ((sample_magnitude >> 3) & 0xF);
+        ccw = ((sign << 7) | (chord << 4) | step);
+        return ccw;
+    }
+    if (sample_magnitude >> 6)
+    {
+        chord = 0x1;
+        step = ((sample_magnitude >> 2) & 0xF);
+        ccw = ((sign << 7) | (chord << 4) | step);
+        return ccw;
+    }
+    if (sample_magnitude >> 5)
+    {
+        chord = 0x0;
+        step = ((sample_magnitude >> 1) & 0xF);
+        ccw = ((sign << 7) | (chord << 4) | step);
+        return ccw;
+    }
 
     // OPTIMIZATION - IF/ELSE
     // char chord, step, ccw;
