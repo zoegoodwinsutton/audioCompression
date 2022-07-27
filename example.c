@@ -242,11 +242,11 @@ void readWaveFileSamples(FILE *ptr)
             sample_data[i] = ((buffer2[0]) | (buffer2[1] << 8));
         }
     }
-    // else
-    // {
-    //     printf("Can only read PCM.");
-    //     exit(1);
-    // }
+    else
+    {
+        printf("Can only read PCM.");
+        exit(1);
+    }
     printf("Finished reading WAV file samples\n");
 } //BARR C
 
@@ -410,7 +410,7 @@ inline unsigned int codewordDecompression(int codeword)
     int step = (codeword & 0x0F);
     return ((1<<chord) | (step << (chord+1)) | (1 << (chord+5)));
 
-    //ORIGINAL
+    // //ORIGINAL
     // if (chord == 0x7) 
     // {
     //     return ((1 << 7) | (step << 8) | (1 << 12));
@@ -473,12 +473,12 @@ void compression()
     for(i = 0; i < num_samples; i ++)
     {
         int sample = (sample_data[i] >> 2);
-        int sign = sign(sample); 
-        unsigned int sample_magnitude = (magnitude(sample) + 33);
+        int sign = ((~sample >> 31) & 0x1); 
+        unsigned int sample_magnitude = ((sample < 0 ? -sample : sample) + 33);
         int ccw = ~codewordCompression(sample_magnitude, sign);
         compressed_samples[i] = ccw;   
     }
-}
+} //BARR C
 
 void decompression() 
 {
