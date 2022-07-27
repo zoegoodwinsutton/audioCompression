@@ -488,9 +488,8 @@ void decompression()
         int sample = ~(compressed_samples[i]);
         int sign = ((sample & 0x80) >> 7);
         unsigned int sample_magnitude = (codewordDecompression(sample) - 33); 
-        sample = (sign == 1 ? sample_magnitude : -sample_magnitude);
-        // if (sign == 1) sample = sample_magnitude;
-        // else sample = -sample_magnitude;
+        if (sign == 1) sample = sample_magnitude;
+        else sample = -sample_magnitude;
         sample_data[i] = (sample << 2);
     }
 } //BARR C
