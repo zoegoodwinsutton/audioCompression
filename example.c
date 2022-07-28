@@ -405,8 +405,8 @@ inline char codewordCompression( unsigned int sample_magnitude, int sign)
 inline unsigned int codewordDecompression(int codeword)
 {
     //OPTMIZATION 3
-    // int chord = ((codeword & 0x70) >> 4);
-    // int step = (codeword & 0x0F);
+    int chord = ((codeword & 0x70) >> 4);
+    int step = (codeword & 0x0F);
     // return ((1<<chord) | (step << (chord+1)) | (1 << (chord+5)));
 
     //ORIGINAL
