@@ -274,10 +274,10 @@ void readWaveFileSamples(FILE *ptr)
 inline char codewordCompression( unsigned int sample_magnitude, int sign)
 {
     // OPTIMIZATION 2 LUT
-    // char chord = compressionchord[(sample_magnitude >> 5)];
-    // char step = ((sample_magnitude >> (chord+1)) & 0xF);
-    // char ccw = ((sign << 7) | (chord << 4) | step);
-    // return ccw;
+    char chord = compressionchord[(sample_magnitude >> 5)];
+    char step = ((sample_magnitude >> (chord+1)) & 0xF);
+    char ccw = ((sign << 7) | (chord << 4) | step);
+    return ccw;
     
     // OPTIMIZATION 3 CLZ
     // char chord;
@@ -290,64 +290,78 @@ inline char codewordCompression( unsigned int sample_magnitude, int sign)
     // char ccw = ((sign << 7) | (chord << 4) | step);
     // return ccw;
 
-    //ORIGINAL
-    char chord, step, ccw;
-    if (sample_magnitude >> 12)
-    {
-        chord = 0x7;
-        step = ((sample_magnitude >> 8) & 0xF);
-        ccw = ((sign << 7) | (chord << 4) | step);
-        return ccw;
-    } 
-    if (sample_magnitude >> 11)
-    {
-        chord = 0x6;
-        step = ((sample_magnitude >> 7) & 0xF);
-        ccw = ((sign << 7) | (chord << 4) | step);
-        return ccw;
-    }
-    if (sample_magnitude >> 10)
-    {
-        chord = 0x5;
-        step = ((sample_magnitude >> 6) & 0xF);
-        ccw = ((sign << 7) | (chord << 4) | step);
-        return ccw;
-    }
-    if (sample_magnitude >> 9)
-    {
-        chord = 0x4;
-        step = ((sample_magnitude >> 5) & 0xF);
-        ccw = ((sign << 7) | (chord << 4) | step);
-        return ccw;
-    }
-    if (sample_magnitude >> 8)
-    {
-        chord = 0x3;
-        step = ((sample_magnitude >> 4) & 0xF);
-        ccw = ((sign << 7) | (chord << 4) | step);
-        return ccw;
-    }
-    if (sample_magnitude >> 7)
-    {
-        chord = 0x2;
-        step = ((sample_magnitude >> 3) & 0xF);
-        ccw = ((sign << 7) | (chord << 4) | step);
-        return ccw;
-    }
-    if (sample_magnitude >> 6)
-    {
-        chord = 0x1;
-        step = ((sample_magnitude >> 2) & 0xF);
-        ccw = ((sign << 7) | (chord << 4) | step);
-        return ccw;
-    }
-    if (sample_magnitude >> 5)
-    {
-        chord = 0x0;
-        step = ((sample_magnitude >> 1) & 0xF);
-        ccw = ((sign << 7) | (chord << 4) | step);
-        return ccw;
-    }
+
+    // char chord = 0;
+    // int i;
+    // for(i = 5; i < 12; i++)
+    // {
+    //     if(sample_magnitude & (1 << i))
+    //     {
+    //         chord = chord + 1;
+    //     }
+    // }
+    // char step = ((sample_magnitude >> (chord+1)) & 0xF);
+    // char ccw = ((sign << 7) | (chord << 4) | step);
+    // return ccw;
+
+    // //ORIGINAL
+    // char chord, step, ccw;
+    // if (sample_magnitude >> 12)
+    // {
+    //     chord = 0x7;
+    //     step = ((sample_magnitude >> 8) & 0xF);
+    //     ccw = ((sign << 7) | (chord << 4) | step);
+    //     return ccw;
+    // } 
+    // if (sample_magnitude >> 11)
+    // {
+    //     chord = 0x6;
+    //     step = ((sample_magnitude >> 7) & 0xF);
+    //     ccw = ((sign << 7) | (chord << 4) | step);
+    //     return ccw;
+    // }
+    // if (sample_magnitude >> 10)
+    // {
+    //     chord = 0x5;
+    //     step = ((sample_magnitude >> 6) & 0xF);
+    //     ccw = ((sign << 7) | (chord << 4) | step);
+    //     return ccw;
+    // }
+    // if (sample_magnitude >> 9)
+    // {
+    //     chord = 0x4;
+    //     step = ((sample_magnitude >> 5) & 0xF);
+    //     ccw = ((sign << 7) | (chord << 4) | step);
+    //     return ccw;
+    // }
+    // if (sample_magnitude >> 8)
+    // {
+    //     chord = 0x3;
+    //     step = ((sample_magnitude >> 4) & 0xF);
+    //     ccw = ((sign << 7) | (chord << 4) | step);
+    //     return ccw;
+    // }
+    // if (sample_magnitude >> 7)
+    // {
+    //     chord = 0x2;
+    //     step = ((sample_magnitude >> 3) & 0xF);
+    //     ccw = ((sign << 7) | (chord << 4) | step);
+    //     return ccw;
+    // }
+    // if (sample_magnitude >> 6)
+    // {
+    //     chord = 0x1;
+    //     step = ((sample_magnitude >> 2) & 0xF);
+    //     ccw = ((sign << 7) | (chord << 4) | step);
+    //     return ccw;
+    // }
+    // if (sample_magnitude >> 5)
+    // {
+    //     chord = 0x0;
+    //     step = ((sample_magnitude >> 1) & 0xF);
+    //     ccw = ((sign << 7) | (chord << 4) | step);
+    //     return ccw;
+    // }
 
     // OPTIMIZATION - IF/ELSE
     // char chord, step, ccw;
@@ -391,9 +405,9 @@ inline char codewordCompression( unsigned int sample_magnitude, int sign)
 inline unsigned int codewordDecompression(int codeword)
 {
     //OPTMIZATION 3
-    int chord = ((codeword & 0x70) >> 4);
-    int step = (codeword & 0x0F);
-    return ((1<<chord) | (step << (chord+1)) | (1 << (chord+5)));
+    // int chord = ((codeword & 0x70) >> 4);
+    // int step = (codeword & 0x0F);
+    // return ((1<<chord) | (step << (chord+1)) | (1 << (chord+5)));
 
     //ORIGINAL
     // if (chord == 0x7) 
@@ -430,25 +444,25 @@ inline unsigned int codewordDecompression(int codeword)
     // } 
     
     //OPTIMIZATION SWITCH
-    // switch(chord)
-    //{
-    //     case 0x7:
-    //         return ((1 << 7) | (step << 8) | (1 << 12));
-    //     case 0x6:
-    //         return ((1 << 6) | (step << 7) | (1 << 11));
-    //     case 0x5:
-    //         return ((1 << 5) | (step << 6) | (1 << 10));
-    //     case 0x4:
-    //         return ((1 << 4) | (step << 5) | (1 << 9));
-    //     case 0x3:
-    //         return ((1 << 3) | (step << 4) | (1 << 8));
-    //     case 0x2:
-    //         return ((1 << 2) | (step << 3) | (1 << 7));
-    //     case 0x1:
-    //         return ((1 << 1) | (step << 2) | (1 << 6));
-    //     case 0x0:
-    //         return ((1) | (step << 1) | (1 << 5));
-    // } 
+    switch(chord)
+    {
+        case 0x7:
+            return ((1 << 7) | (step << 8) | (1 << 12));
+        case 0x6:
+            return ((1 << 6) | (step << 7) | (1 << 11));
+        case 0x5:
+            return ((1 << 5) | (step << 6) | (1 << 10));
+        case 0x4:
+            return ((1 << 4) | (step << 5) | (1 << 9));
+        case 0x3:
+            return ((1 << 3) | (step << 4) | (1 << 8));
+        case 0x2:
+            return ((1 << 2) | (step << 3) | (1 << 7));
+        case 0x1:
+            return ((1 << 1) | (step << 2) | (1 << 6));
+        case 0x0:
+            return ((1) | (step << 1) | (1 << 5));
+    } 
 } //BARR C
 
 void compression() 
@@ -473,9 +487,9 @@ void decompression()
         int sample = ~(compressed_samples[i]);
         int sign = ((sample & 0x80) >> 7);
         unsigned int sample_magnitude = (codewordDecompression(sample) - 33); 
-        sample = (sign == 1 ? sample_magnitude : -sample_magnitude);
-        // if (sign == 1) sample = sample_magnitude;
-        // else sample = -sample_magnitude;
+        //sample = (sign == 1 ? sample_magnitude : -sample_magnitude);
+        if (sign == 1) sample = sample_magnitude;
+        else sample = -sample_magnitude;
         sample_data[i] = (sample << 2);
     }
 } //BARR C
